@@ -1,12 +1,12 @@
 import random 
 import copy
-random.seed(42)
 
 class Puzzle():
     # Eight puzzle representation with methods for solving
 
     def __init__(self):
         # Set initial state as the goal state
+        random.seed(42)
         self.goal_state = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
         self.state = [[0, 1, 2], [3, 4, 5], [6, 7, 8]]
         
