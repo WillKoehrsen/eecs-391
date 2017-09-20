@@ -1,5 +1,8 @@
 # Welcome to the eight puzzle solver. 
 
+The eight puzzle solver finds solution paths to the classic eight puzzle
+algorithmically using a-star search and local beam search. 
+
 ## Author: William Koehrsen
 ## Date: September 20, 2017
 
@@ -11,8 +14,10 @@ python 3.5.4+
 
 **report.pdf** 
 
-Contains full documentation of the project and comprehensive
-examples demonstrating the required methods. 
+Contains full documentation of the project with citations and comprehensive
+examples demonstrating the required methods. The report was written as a 
+Jupyter Notebook and compiled to html and pdf.
+
 
 **eight_puzzle.py** 
 
@@ -24,6 +29,19 @@ required methods
 Contains a command line parser and file parser for 
 interacting with the eight puzzle through the command line or through a series 
 of commands in a text file. 
+
+**images/**
+
+Contains R graphs used in the report.
+
+**tests/**
+
+Contains text files used to send sequences of commands to the eight puzzle
+from the command line. 
+
+**report.ipynb** 
+
+Original Jupyter Notebook of report. 
 
 ## Command line arguments
 
@@ -115,8 +133,9 @@ python play_puzzle.py -setState "3b5 421 678" -solveBeam 100 -maxNodes 5000 -pre
 
 ## File Reading Operation
 
-1. Randomize the state of the puzzle using 10 random moves from the goal 
-and try to solve using astar search with the default number of max nodes. 
+1. Randomize the state of the puzzle using 16 random moves from the goal 
+and try to solve using astar search with the h2 heuristic and the default 
+number of maximum nodes. pretty print the resulting solution path. 
 
 Command line input
 
@@ -124,7 +143,7 @@ python play_puzzle.py -readCommands tests/randomize_solve_astar.txt
 
 "randomize_solve_astar.txt":
 
-randomizeState 10 solveAStar h2 
+randomizeState 16 solveAStar h2 prettyPrintSolution
 
 2. Set state to "3b2 615 748", print the state, and try to solve using 
 local beam search with k = 50 and 2000 max nodes. 

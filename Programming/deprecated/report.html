@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>Report</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>Solving the Eight Puzzle with Search Algorithms</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 <style type="text/css">
@@ -13,8 +11,8 @@
 *
 */
 /*!
- * Bootstrap v3.3.6 (http://getbootstrap.com)
- * Copyright 2011-2015 Twitter, Inc.
+ * Bootstrap v3.3.7 (http://getbootstrap.com)
+ * Copyright 2011-2016 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
@@ -1109,7 +1107,6 @@ a:focus {
   text-decoration: underline;
 }
 a:focus {
-  outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
@@ -2538,7 +2535,6 @@ select[size] {
 input[type="file"]:focus,
 input[type="radio"]:focus,
 input[type="checkbox"]:focus {
-  outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
@@ -3029,7 +3025,6 @@ select[multiple].input-lg {
 .btn.focus,
 .btn:active.focus,
 .btn.active.focus {
-  outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
@@ -8760,6 +8755,9 @@ body > #header .header-bar {
     margin-left: 10px;
   }
 }
+[dir="rtl"] #ipython_notebook {
+  float: right !important;
+}
 #noscript {
   width: auto;
   padding-top: 16px;
@@ -8962,8 +8960,14 @@ span#login_widget > .button .badge,
  *
  * Author: Jupyter Development Team
  */
+[dir="rtl"] #tabs li {
+  float: right;
+}
 ul#tabs {
   margin-bottom: 4px;
+}
+[dir="rtl"] ul#tabs {
+  margin-right: 0px;
 }
 ul#tabs a {
   padding-top: 6px;
@@ -8986,6 +8990,16 @@ ul.breadcrumb span {
 }
 .list_toolbar .tree-buttons {
   padding-top: 1px;
+}
+[dir="rtl"] .list_toolbar .tree-buttons {
+  float: left !important;
+}
+[dir="rtl"] .list_toolbar .pull-right {
+  padding-top: 1px;
+  float: left !important;
+}
+[dir="rtl"] .list_toolbar .pull-left {
+  float: right !important;
 }
 .dynamic-buttons {
   padding-top: 3px;
@@ -9122,6 +9136,9 @@ ul.breadcrumb span {
 #tree-selector {
   padding-right: 0px;
 }
+[dir="rtl"] #tree-selector a {
+  float: right;
+}
 #button-select-all {
   min-width: 50px;
 }
@@ -9211,6 +9228,9 @@ ul#new-menu {
   left: auto;
   right: 0;
 }
+[dir="rtl"] #new-menu {
+  text-align: right;
+}
 .kernel-menu-icon {
   padding-right: 12px;
   width: 24px;
@@ -9255,6 +9275,9 @@ ul#new-menu {
 }
 #running .panel-group .panel .panel-body .list_container .list_item:last-child {
   border-bottom: 0px;
+}
+[dir="rtl"] #running .col-sm-8 {
+  float: right !important;
 }
 .delete-button {
   display: none;
@@ -9551,6 +9574,7 @@ div.cell.selected.jupyter-soft-selected {
   }
 }
 div.inner_cell {
+  min-width: 0;
   /* Old browsers */
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -9571,11 +9595,6 @@ div.inner_cell {
   box-flex: 1;
   /* Modern browsers */
   flex: 1;
-}
-@-moz-document url-prefix() {
-  div.inner_cell {
-    overflow-x: hidden;
-  }
 }
 /* input_area and input_prompt must match in top border and margin for alignment */
 div.input_area {
@@ -11246,7 +11265,7 @@ div#pager .ui-resizable-handle::after {
 }
 .shortcut_key {
   display: inline-block;
-  width: 20ex;
+  width: 21ex;
   text-align: right;
   font-family: monospace;
 }
@@ -11558,6 +11577,7 @@ ul.typeahead-list > li > a {
   box-shadow: 0px 0px 12px 1px rgba(87, 87, 87, 0.2);
 }
 .terminal-app .terminal {
+  width: 100%;
   float: left;
   font-family: monospace;
   color: white;
@@ -11571,6 +11591,9 @@ ul.typeahead-list > li > a {
 .terminal-app .terminal dummy-screen {
   line-height: 1em;
   font-size: 14px;
+}
+.terminal-app .terminal .xterm-rows {
+  padding: 10px;
 }
 .terminal-app .terminal-cursor {
   color: black;
@@ -11699,9 +11722,7 @@ body {
 div#notebook {
   overflow: visible;
   border-top: none;
-}
-
-@media print {
+}@media print {
   div.cell {
     display: block;
     page-break-inside: avoid;
@@ -11722,7 +11743,7 @@ div#notebook {
 
 <!-- Loading mathjax macro -->
 <!-- Load mathjax -->
-    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
@@ -11746,32 +11767,19 @@ div#notebook {
   <div tabindex="-1" id="notebook" class="border-box-sizing">
     <div class="container" id="notebook-container">
 
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<center><h1>Eight Puzzle Solver </h1></center>
-<center><h3> EECS 391 Progamming Project 1 </h3></center>
-<center><h3> William Koehrsen September 28, 2017 </h3></center>
+<h1 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h1>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>The eight puzzle provides an ideal toy environment for exploring one of the fundamental problems in Artificial Intelligence: finding the optimal solution path through search. Although the eight puzzle presents a simplified environment, the general techniques of search employed to find a solution can translate into many domains, including laying out components on a computer chip or finding the best route between two cities. Two different search strategies were explored in this report: a-star and local beam.</p>
+<p>The <a href="http://www.d.umn.edu/~jrichar4/8puz.html">eight puzzle</a> provides an ideal environment for exploring one of the fundamental problems in Artificial Intelligence: searching for the optimal solution path. Although the eight puzzle is a simplified environment, the general techniques of search employed to find the solution can translate into many domains, including <a href="https://en.wikipedia.org/wiki/Very-large-scale_integration">laying out components on a computer chip</a> or finding the <a href="https://www.microsoft.com/en-us/research/publication/computing-the-shortest-path-a-search-meets-graph-theory/">best route between two cities</a>. Two different search strategies were explored in this project: <a href="http://web.mit.edu/eranki/www/tutorials/search/">a-star</a> and <a href="http://aicat.inf.ed.ac.uk/entry.php?id=660">local beam search</a>. A-star search was tested with 2 heuristics, while local beam was tested with several values for the beam width.</p>
 
 </div>
 </div>
@@ -11789,85 +11797,88 @@ div#notebook {
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Approach">Approach<a class="anchor-link" href="#Approach">&#182;</a></h3>
+<h1 id="Approach">Approach<a class="anchor-link" href="#Approach">&#182;</a></h1>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The complete project was coded in Python. The eight_puzzle was implemented as a class that contains an attribute to represent the game board as well, the two methods for solving the puzzle, and a number of utility methods to aid in the solution of the puzzle and visualizing the solution found. The solution of the eight puzzle is the series of actions that get the board from the starting state to the goal state. My approach therefore implemented dictionaries to keep track of all considered nodes. Each node must include the current state (the position of all tiles on the board), the parent state, and the action required to get from the parent state to the child state. When the goal state is reached, the algorithm can then transverse backwards through the dictionary starting at the goal state and linking each child state to its parent and recording the series of moves. This solution path can then be displayed and the length of the solution path can be determined. The efficiency of each search can be found from the solution path and the number of nodes generated during the search.</p>
-<h3 id="Files">Files<a class="anchor-link" href="#Files">&#182;</a></h3><p><strong>eight_puzzle.py</strong></p>
-<p>Contains the eight puzzle class itself.</p>
+<p>The complete project was coded in Python. The eight_puzzle was implemented as a class with attributes to represent the state of board, a number of utility methods to aid in the solution of the puzzle and visualizing the solution path, and most importantly, the two methods for solving the puzzle. The solution of the eight puzzle is the sequence of blank tile moves that lead from the starting state to the goal state. As the solution is a path, my approach used Python dictionaries to keep track of all nodes considered in each search. Each node includes the current state (the position of all tiles on the board), the parent state, and the action required to get from the parent state to the child state. When the goal state is reached, the algorithm can then transverse backwards through the dictionary starting at the goal state and linking each child state to its parent while recording the series of moves of the blank tile. This solution path can then be displayed and the length of the solution path can be determined. The efficiency of each search can be quantified with an effective branching factor calculated using the length of the solution path and the number of nodes generated during the search.</p>
+<h2 id="Code-Files">Code Files<a class="anchor-link" href="#Code-Files">&#182;</a></h2><p><strong>eight_puzzle.py</strong></p>
+<p>Contains the eight puzzle class with all attributes and methods to represent and solve the puzzle.</p>
 <p><strong>play_puzzle.py</strong></p>
-<p>Contains code for interacting with the puzzle and implementing the commands from the command line or a text file.</p>
-<h3 id="Required-Commands">Required Commands<a class="anchor-link" href="#Required-Commands">&#182;</a></h3><ul>
-<li><p><strong>setState</strong> [state]</p>
-<p>Set the state of a puzzle to the specified argument. The format of the state is "b12 345 678" where each triple represents a 
-  row and the b is the blank tile (the only tile that can be moved).</p>
+<p>Contains code for interacting with the puzzle from the command line or as a series of commands contained in a text file.</p>
+<h2 id="Additional-Folders">Additional Folders<a class="anchor-link" href="#Additional-Folders">&#182;</a></h2><p><strong>tests/</strong></p>
+<p>Contains text files with test cases for the eight puzzle</p>
+<p><strong>images/</strong></p>
+<p>Contains graphs main in R used in this report.</p>
+<h2 id="Required-Commands">Required Commands<a class="anchor-link" href="#Required-Commands">&#182;</a></h2><ul>
+<li><p><strong>-setState</strong> [state]</p>
+<p>Set the state of the puzzle to the specified argument. The format of the state is "b12 345 678"
+  where each triple represents a row and "b" is the blank tile (the only tile that can be moved).</p>
 </li>
 </ul>
 <ul>
-<li><p><strong>randomizeState</strong> [n]</p>
-<p>Randomly set the state of the puzzle by taking a random series of 'n' actions backward from the goal state. As only <a href="https://heuristicswiki.wikispaces.com/N+-+Puzzle">half of
-  the initial states of the eight puzzle are solvable</a>, taking a series of 
-  steps backwards from the goal state ensures that the resulting state will have a solution.</p>
+<li><p><strong>-randomizeState</strong> [n]</p>
+<p>Randomly set the state of the puzzle by taking a random series of n integer actions backward from the goal state. As only 
+  <a href="https://heuristicswiki.wikispaces.com/N+-+Puzzle">half of the initial states of the eight puzzle are solvable</a>,
+  taking a series of steps backward from the goal state ensures that the resulting state will have a solution.</p>
 </li>
 </ul>
 <ul>
-<li><p><strong>printState</strong></p>
+<li><p><strong>-printState</strong></p>
 <p>Displays the current state of the puzzle in the form "b12 345 678"</p>
 </li>
 </ul>
 <ul>
-<li><p><strong>move</strong> [direction]</p>
+<li><p><strong>-move</strong> [direction]</p>
 <p>Move the blank one place in the specified direction. The move must be one of the following: ["up", "down", "left", "right"] 
-  and admissible moves will be determined by the current state of the puzzle.</p>
+  Allowed moves will be determined by the current state of the puzzle.</p>
 </li>
 </ul>
 <ul>
-<li><p><strong>solveAStar</strong> [hueristic]</p>
-<p>Solve the eight puzzle using the specified heuristic. The choices for the heuristic are ['h1'] or ['h2']. 'h1' counts the 
+<li><p><strong>-solveAStar</strong> [hueristic]</p>
+<p>Solve the eight puzzle using the specified heuristic. The choices for the heuristic are 'h1' or 'h2'. 'h1' counts the 
   number of misplaced tiles from the goal state while h2 represents the sum of the Manhattan distances of each tile from its
-  correct position in the goal state. After solving the puzzle, the solution path should be printed as a series of actions as
-  well as the number of actions required to reach the solution.</p>
+  correct position in the goal state. After solving the puzzle, the solution path should be printed as a series of actions to 
+  move from the starting state to the goal state. The length of the solution path should also be displayed.</p>
 </li>
 </ul>
 <ul>
-<li><p><strong>solveBeam</strong> [k]</p>
-<p>Solve the eight puzzle using the local beam search with the beam width equal to 'k'. In general, a larger value of k is more
-  likely to find a solution becuase the search space is larger, but larger k values will require retaining more nodes in
-  memory. After solving the puzzle, the solution path should be printed as a series of actions as well as the number of 
-  actions required to reach the solution.</p>
+<li><p><strong>-solveBeam</strong> [k]</p>
+<p>Solve the eight puzzle using local beam search with the beam width equal to the integer k. In general, a larger value of k 
+  is more likely to find a solution becuase the search space is larger, but larger k values will require retaining more nodes 
+  in memory. After solving the puzzle, the solution path should be printed as a series of actions to 
+  move from the starting state to the goal state. The length of the solution path should also be displayed.</p>
 </li>
 </ul>
 <ul>
-<li><p><strong>maxNodes</strong> [n]</p>
-<p>The maximum number of nodes to generate during a search. A node is generated when it is expanded by taking a move from its
-  parent. When this limit is exceeded, the code must display an error message. If max nodes is not specified, a default
+<li><p><strong>-maxNodes</strong> [n]</p>
+<p>The maximum integer n number  of nodes to generate during a search. A node is generated when its parent state is expanded. 
+  When this limit is exceeded, the code will display an error message. If max nodes is not specified, a default maximum
   number of 10000 nodes is passed to the method.</p>
 </li>
 </ul>
 <ul>
-<li><p><strong>readCommands</strong> [file.txt]</p>
+<li><p><strong>-readCommands</strong> [file.txt]</p>
 <p>Read and execute a series of commands from a text file. The commands are specified in the same format as the commands for 
-  the command line except without the dashes.</p>
+  the command line except without the dashes. An example text file is shown below:</p>
+<p><code>setState "3b2 615 748" printState solveBeam 50 maxNodes 2000</code></p>
 </li>
 </ul>
-<h4 id="Additional-Commands">Additional Commands<a class="anchor-link" href="#Additional-Commands">&#182;</a></h4><ul>
-<li><p><strong>prettyPrintState</strong></p>
+<h2 id="Additional-Commands">Additional Commands<a class="anchor-link" href="#Additional-Commands">&#182;</a></h2><ul>
+<li><p><strong>-prettyPrintState</strong></p>
 <p>Displays the current state in an aesthetic and understandable format.</p>
 </li>
 </ul>
 <ul>
-<li><p><strong>prettyPrintSolution</strong></p>
+<li><p><strong>-prettyPrintSolution</strong></p>
 <p>Displays the solution as a sequence of moves in an aesthetic and understandable format.</p>
 </li>
 </ul>
@@ -11875,22 +11886,21 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Command-Implementation">Command Implementation<a class="anchor-link" href="#Command-Implementation">&#182;</a></h3><p>To demonstrate the functionality of the commands, I will show the code that implements the command as well as examples of running the command from the command line.</p>
+<h1 id="Command-Implementation">Command Implementation<a class="anchor-link" href="#Command-Implementation">&#182;</a></h1><p>To demonstrate the functionality of the commands, I explain the code that implements the command as well as examples of running the command from the command line. I also show examples of reading commands from a specified text file.</p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="setState-and-printState">setState and printState<a class="anchor-link" href="#setState-and-printState">&#182;</a></h2><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_string</span><span class="p">):</span>
+<h2 id="setState-and-printState">setState and printState<a class="anchor-link" href="#setState-and-printState">&#182;</a></h2><p>setState and printState are both self-explanatory as setState can be used to set the state of the puzzle to any legal configuration and print state can be used to display the state and confirm that the state is as expected. setState checks to make sure that the string is a legal representation of the eight puzzle and then sets the state. printState iterates through the puzzle board and diplays the state in the same format as that used to set the state.</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">set_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_string</span><span class="p">):</span>
         <span class="c1"># Set the state of the puzzle to state_string in format &quot;b12 345 678&quot;</span>
 
         <span class="c1"># Check string for correct length</span>
@@ -11948,12 +11958,11 @@ div#notebook {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The following code block shows an example of setting the state to "325 678 b14" and displaying the result in both string format and prettyPrint format. The "b" and the 0 are interchangeable and the puzzle converts b input into 0 to represent the blank tile.</p>
+<p>The following code block shows an example of setting the state to "325 678 b14" and displaying the result in both string format and prettyPrint format. The 0 in the pretty printed state is the blank tile.</p>
 
 </div>
 </div>
@@ -11974,7 +11983,11 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Current puzzle state:
 325 678 b14
@@ -11994,17 +12007,16 @@ Current State
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="randomizeState">randomizeState<a class="anchor-link" href="#randomizeState">&#182;</a></h2>
+<h2 id="randomizeState">randomizeState<a class="anchor-link" href="#randomizeState">&#182;</a></h2><p>This method takes a random sequence of "n" allowed moves backwards from the goal state. The resulting state will be solvable. The implementation first sets the state of the puzzle to the goal state, then, for n iterations, the code finds the list of available moves and takes on at random. The state is then set to the result of the move for the next iteration.</p>
+
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12027,12 +12039,11 @@ Current State
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The following code block shows an example of randomizing the state by taking 50 random steps from the goal state. The code also displays the state after randomizing in both string format and prettyPrint</p>
+<p>The following code block shows an example of randomizing the state by taking 50 random steps from the goal state. The code also displays the state after randomizing in both string format and prettyPrint format.</p>
 
 </div>
 </div>
@@ -12053,7 +12064,11 @@ Current State
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Current puzzle state:
 154 3b2 678
@@ -12073,70 +12088,66 @@ Current State
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="move">move<a class="anchor-link" href="#move">&#182;</a></h2>
+<h2 id="move">move<a class="anchor-link" href="#move">&#182;</a></h2><p>This method moves the blank one spot in the specified direction. If the move is not allowed based on the current state of the puzzle, a message is displayed. The move is made as a series of else if statements and the new state is returned as a list.</p>
+
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>``` python
-def move(self, state, action):</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="c1"># Move the blank in the specified direction</span>
+        <span class="c1"># Returns the new state resulting from the move</span>
+        <span class="n">available_actions</span><span class="p">,</span> <span class="n">blank_row</span><span class="p">,</span> <span class="n">blank_column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_available_actions</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
-<pre><code>    # Move the blank in the specified direction
-    # Returns the new state resulting from the move
-    available_actions, blank_row, blank_column = self.get_available_actions(state)
+        <span class="n">new_state</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
-    new_state = copy.deepcopy(state)
+        <span class="c1"># Check to make sure action is allowed given board state</span>
+        <span class="k">if</span> <span class="n">action</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">available_actions</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Move not allowed</span><span class="se">\n</span><span class="s2">Allowed moves:&quot;</span><span class="p">,</span> <span class="n">available_actions</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">False</span>
 
-    # Check to make sure action is allowed given board state
-    if action not in available_actions:
-        print("Move not allowed\nAllowed moves:", available_actions)
-        return False
+        <span class="c1"># Execute the move as a series of if statements</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;down&quot;</span><span class="p">:</span>
+                <span class="n">tile_to_move</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="n">blank_row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">blank_column</span><span class="p">]</span>
+                <span class="n">new_state</span><span class="p">[</span><span class="n">blank_row</span><span class="p">][</span><span class="n">blank_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile_to_move</span>
+                <span class="n">new_state</span><span class="p">[</span><span class="n">blank_row</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">blank_column</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;up&quot;</span><span class="p">:</span>
+                <span class="n">tile_to_move</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="n">blank_row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">blank_column</span><span class="p">]</span>
+                <span class="n">new_state</span><span class="p">[</span><span class="n">blank_row</span><span class="p">][</span><span class="n">blank_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile_to_move</span>
+                <span class="n">new_state</span><span class="p">[</span><span class="n">blank_row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">blank_column</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span>
+                <span class="n">tile_to_move</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="n">blank_row</span><span class="p">][</span><span class="n">blank_column</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">new_state</span><span class="p">[</span><span class="n">blank_row</span><span class="p">][</span><span class="n">blank_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile_to_move</span>
+                <span class="n">new_state</span><span class="p">[</span><span class="n">blank_row</span><span class="p">][</span><span class="n">blank_column</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>
+                <span class="n">tile_to_move</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="n">blank_row</span><span class="p">][</span><span class="n">blank_column</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">new_state</span><span class="p">[</span><span class="n">blank_row</span><span class="p">][</span><span class="n">blank_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile_to_move</span>
+                <span class="n">new_state</span><span class="p">[</span><span class="n">blank_row</span><span class="p">][</span><span class="n">blank_column</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-    # Execute the move as a series of if statements, probably not the most efficient method
-    else:
-        if action == "down":
-            tile_to_move = state[blank_row + 1][blank_column]
-            new_state[blank_row][blank_column] = tile_to_move
-            new_state[blank_row + 1][blank_column] = 0
-        elif action == "up":
-            tile_to_move = state[blank_row - 1][blank_column]
-            new_state[blank_row][blank_column] = tile_to_move
-            new_state[blank_row - 1][blank_column] = 0
-        elif action == "right":
-            tile_to_move = state[blank_row][blank_column + 1]
-            new_state[blank_row][blank_column] = tile_to_move
-            new_state[blank_row][blank_column + 1] = 0
-        elif action == "left":
-            tile_to_move = state[blank_row][blank_column - 1]
-            new_state[blank_row][blank_column] = tile_to_move
-            new_state[blank_row][blank_column -1] = 0
-
-    return new_state</code></pre>
+        <span class="k">return</span> <span class="n">new_state</span>
+</pre></div>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The following two examples first illustrate taking a valid move and then an invalid move. (The puzzle is first set to the goal state for demonstration purposes.</p>
+<p>The following two examples first illustrate taking a valid move and then an invalid move. (The puzzle is first set to the goal state for demonstration purposes.)</p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12161,10 +12172,14 @@ def move(self, state, action):</p>
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Current puzzle state:
-1b2 345 678
+b12 345 678
 </pre>
 </div>
 </div>
@@ -12173,8 +12188,7 @@ def move(self, state, action):</p>
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12199,10 +12213,14 @@ def move(self, state, action):</p>
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Move not allowed
-Allowed moves: [&#39;down&#39;, &#39;right&#39;]
+Allowed moves: [&#39;right&#39;, &#39;down&#39;]
 </pre>
 </div>
 </div>
@@ -12211,17 +12229,22 @@ Allowed moves: [&#39;down&#39;, &#39;right&#39;]
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="solveAStar">solveAStar<a class="anchor-link" href="#solveAStar">&#182;</a></h2>
+<h2 id="solveAStar">solveAStar<a class="anchor-link" href="#solveAStar">&#182;</a></h2><p>The main part of the a-star search code is a loop that runs until either a solution is found or the maximum number of nodes is generated. On each iteration, the code finds the available moves from the current state of the puzzle, and then checks to make sure that these moves do not result in a state that has already been expanded or is already on the frontier. If the move satisfies these conditions, the total cost of the move is then evaluated by taking the path cost of the resulting state plus the heuristic of the resulting state (see background on A-Star below). The state that results from the move is then added to the priority queue and at the end of the iteration, the priority queue is sorted by total cost. At the end of each iteration, the best state is chosen from the front of the priority queue and expanded. The node that is expanded will then be added to the expanded_nodes dictionary in order to generate the solution path at the end of the loop. The states that are not expanded on an iteration will be added to the frontier in order to keep track of which nodes have been generated but not expanded. The goal check occurs when a node is expanded rather than when it is generated because it might be possible that the first time the goal state is encountered is not the lowest cost path to the goal. Once a solution is found, the expanded_nodes dictionary is passed to another function that generates and displays the solution path.  The total number of nodes generated is the sum of the nodes in the frontier_nodes dictionary and the expanded_nodes dictionary.</p>
+<h3 id="Background-on-A-star-search">Background on A-star search<a class="anchor-link" href="#Background-on-A-star-search">&#182;</a></h3><p>A-star search is a powerful algorithm for finding an optimal solution path. A-star search chooses the next state based on the total cost of all nodes on the frontier (those that have been generated but not yet expanded). The total cost of a node is defined as</p>
+<p>$$f(state) = g(state) + h(state) $$</p>
+<p>f(state), the total cost of the state, is the sum of g(state), the path cost to get to the state, and h(state), the heuristic function evaluated at the state. In the eight puzzle, the path cost is simply the depth of the state, or the number of moves to get from the start state to the goal state because each move incurs the same cost. The heuristic is either h1, the number of tiles misplaced from their position in the goal state, or h2, the sum of the <a href="https://xlinux.nist.gov/dads/HTML/manhattanDistance.html">Manhattan distances</a> of all tiles from their position in the goal state. The heuristic is essentially an estimate of the remaining path distance from the state to the goal.</p>
+<p>A-star implements a priority queue, where the frontier nodes in the queue are ordered by total cost with the lowest cost nodes at the front of the queue. Each iteration, the lowest cost node (first in the queue) is expanded and then removed from the queue. My algorithm implements a priority queue, as well as a dictionary to keep track of the expanded nodes and a dictionary to keep track of the nodes on the frontier. The solution path is the sequence of actions from the start state to the goal state, the solution length is the number of actions required, and the number of nodes considered is the number of nodes expanded plus the number of nodes on the frontier.</p>
+<p>A-star search is optimal (it finds the shortest solution path) and complete if the heuristic is both <a href="https://en.wikipedia.org/wiki/Admissible_heuristic">admissible</a> and <a href="https://en.wikipedia.org/wiki/Consistent_heuristic">consistent</a>. Admissibility means that the heuristic never overestimates the distance to the goal state. A heuristic is consistent if the estimate to the goal for any node is always less than or equal to the estimate to the goal for any neighboring vertex plus the path cost of reaching that vertex. (This is a general form of the triangle inequality).</p>
+<p>Both the h1 and h2 heuristics are admissible and consistent guaranteeing that they will find the optimal solution if it exists. However, the two heuristics are not equally efficient as will be demonstrated in the calculation of the effective branching factors.</p>
+
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12235,21 +12258,28 @@ Allowed moves: [&#39;down&#39;, &#39;right&#39;]
 
         <span class="bp">self</span><span class="o">.</span><span class="n">starting_state</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
         <span class="n">current_state</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
-        <span class="c1"># Node index is used for indexing the dictionaries and to keep track of the number of nodes expanded</span>
+        <span class="c1"># Node index is used for indexing the dictionaries and to keep </span>
+        <span class="c1"># track of the number of nodes expanded</span>
         <span class="n">node_index</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="c1"># Set the first element in both dictionaries to the starting state</span>
         <span class="c1"># This is the only node that will be in both dictionaries</span>
-        <span class="n">expanded_nodes</span><span class="p">[</span><span class="n">node_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="n">current_state</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span>
-                                   <span class="s2">&quot;total_cost&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_total_cost</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">current_state</span><span class="p">,</span> <span class="n">heuristic</span><span class="p">),</span> <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+        <span class="n">expanded_nodes</span><span class="p">[</span><span class="n">node_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="n">current_state</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;total_cost&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_total_cost</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">current_state</span><span class="p">,</span> <span class="n">heuristic</span><span class="p">),</span>
+                     <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
 
-        <span class="n">frontier_nodes</span><span class="p">[</span><span class="n">node_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="n">current_state</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span>
-                                   <span class="s2">&quot;total_cost&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_total_cost</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">current_state</span><span class="p">,</span> <span class="n">heuristic</span><span class="p">),</span> <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+        <span class="n">frontier_nodes</span><span class="p">[</span><span class="n">node_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="n">current_state</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> 
+                    <span class="s2">&quot;total_cost&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_total_cost</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">current_state</span><span class="p">,</span> <span class="n">heuristic</span><span class="p">),</span>
+                     <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
 
 
         <span class="n">failure</span> <span class="o">=</span> <span class="bp">False</span>
 
-        <span class="c1"># all_nodes keeps track of all nodes on the frontier and is the priority queue. Each element in the list is a tuple consisting of node index and total cost of the node. This will be sorted by the total cost and serve as the priority queue.</span>
+        <span class="c1"># all_nodes keeps track of all nodes on the frontier and is the priority queue. </span>
+        <span class="c1"># Each element in the list is a tuple consisting of node index and total cost of </span>
+        <span class="c1">#the node. This will be sorted by the total cost and serve as the priority queue.</span>
         <span class="n">all_frontier_nodes</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">frontier_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;total_cost&quot;</span><span class="p">])]</span>
 
         <span class="c1"># Stop when maximum nodes have been considered</span>
@@ -12286,13 +12316,15 @@ Allowed moves: [&#39;down&#39;, &#39;right&#39;]
                             <span class="n">repeat</span> <span class="o">=</span> <span class="bp">True</span>
 
                 <span class="c1"># Check to see if new state and parent is on the frontier</span>
-                <span class="c1"># The same state can be added twice to the frontier if the parent state is different</span>
+                <span class="c1"># The same state can be added twice to the frontier if the parent state </span>
+                <span class="c1"># is different</span>
                 <span class="k">for</span> <span class="n">frontier_node</span> <span class="ow">in</span> <span class="n">frontier_nodes</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                     <span class="k">if</span> <span class="n">frontier_node</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">new_state</span><span class="p">:</span>
                         <span class="k">if</span> <span class="n">frontier_node</span><span class="p">[</span><span class="s2">&quot;parent&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">new_state_parent</span><span class="p">:</span>
                             <span class="n">repeat</span> <span class="o">=</span> <span class="bp">True</span>
 
-                <span class="c1"># If new state has already been expanded or is on the frontier, continue with next action     </span>
+                <span class="c1"># If new state has already been expanded or is on the frontier, </span>
+                <span class="c1"># continue with next action     </span>
                 <span class="k">if</span> <span class="n">repeat</span><span class="p">:</span>
                     <span class="k">continue</span>
 
@@ -12301,19 +12333,23 @@ Allowed moves: [&#39;down&#39;, &#39;right&#39;]
                     <span class="n">node_index</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="n">depth</span> <span class="o">=</span> <span class="n">current_depth</span> <span class="o">+</span> <span class="mi">1</span>
 
-                    <span class="c1"># Total cost is path length (number of steps from starting state) + heuristic</span>
+                    <span class="c1"># Total cost is </span>
+                    <span class="c1"># path length (number of steps from starting state) + heuristic</span>
                     <span class="n">new_state_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_total_cost</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">new_state</span><span class="p">,</span> <span class="n">heuristic</span><span class="p">)</span>
 
                     <span class="c1"># Add the node index and total cost to the all_nodes list</span>
                     <span class="n">all_frontier_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">node_index</span><span class="p">,</span> <span class="n">new_state_cost</span><span class="p">))</span>
 
                     <span class="c1"># Add the node to the frontier </span>
-                    <span class="n">frontier_nodes</span><span class="p">[</span><span class="n">node_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="n">new_state</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="n">new_state_parent</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">action</span><span class="p">,</span> <span class="s2">&quot;total_cost&quot;</span><span class="p">:</span> <span class="n">new_state_cost</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="n">current_depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">}</span>
+                    <span class="n">frontier_nodes</span><span class="p">[</span><span class="n">node_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="n">new_state</span><span class="p">,</span> 
+                            <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="n">new_state_parent</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">action</span><span class="p">,</span> 
+                            <span class="s2">&quot;total_cost&quot;</span><span class="p">:</span> <span class="n">new_state_cost</span><span class="p">,</span> <span class="s2">&quot;depth&quot;</span><span class="p">:</span> <span class="n">current_depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">}</span>
 
             <span class="c1"># Sort all the nodes on the frontier by total cost</span>
             <span class="n">all_frontier_nodes</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_frontier_nodes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-            <span class="c1"># If the number of nodes generated does not exceed max nodes, find the best node and set the current state to that state</span>
+            <span class="c1"># If the number of nodes generated does not exceed max nodes, </span>
+            <span class="c1"># find the best node and set the current state to that state</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">failure</span><span class="p">:</span>
                 <span class="c1"># The best node will be at the front of the queue</span>
                 <span class="c1"># After selecting the node for expansion, remove it from the queue</span>
@@ -12340,12 +12376,11 @@ Allowed moves: [&#39;down&#39;, &#39;right&#39;]
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The following example shows solving the puzzle from the state "312 475 68b" with a-star using the h1 heuristic and the default number of max nodes (10000). This puzzle can be solved in four moves and the solution is also printed out in a pretty format to see the sequence of moves.</p>
+<p>The following example shows solving the puzzle from the state "312 475 68b" with a-star using the h1 heuristic and the default number of max nodes (10000). This puzzle can be solved in four moves and the solution is printed out in a pretty format to see the sequence of moves.</p>
 
 </div>
 </div>
@@ -12366,7 +12401,11 @@ Allowed moves: [&#39;down&#39;, &#39;right&#39;]
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Solution found!
 Solution Length:  4
@@ -12422,8 +12461,7 @@ GOAL!!!!!!!!!
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12432,8 +12470,7 @@ GOAL!!!!!!!!!
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12458,7 +12495,11 @@ GOAL!!!!!!!!!
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>No Solution Found in first 10 nodes generated
 </pre>
@@ -12469,8 +12510,7 @@ GOAL!!!!!!!!!
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12479,8 +12519,7 @@ GOAL!!!!!!!!!
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12505,12 +12544,16 @@ GOAL!!!!!!!!!
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Solution found!
-Solution Length:  4
-Solution Path [&#39;start&#39;, &#39;left&#39;, &#39;left&#39;, &#39;up&#39;, &#39;up&#39;, &#39;goal&#39;]
-Total nodes generated: 10
+Solution Length:  2
+Solution Path [&#39;start&#39;, &#39;left&#39;, &#39;left&#39;, &#39;goal&#39;]
+Total nodes generated: 5
 </pre>
 </div>
 </div>
@@ -12519,36 +12562,37 @@ Total nodes generated: 10
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The algorithm correctly solves the puzzle and finds the optimal path. The efficiency of the a-star algorithm and a comparison between the two heuristics will be discussed in the effective branching factor section of this report.</p>
+<p>The algorithm correctly solves the puzzle with both heuristics as demonstrated. The efficiency of the a-star algorithm and a comparison between the two heuristics will be discussed in the effective branching factor section of this report.</p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="solveBeam">solveBeam<a class="anchor-link" href="#solveBeam">&#182;</a></h2><p>The evaluation function used for local beam search was $$f(n) = h1(state) + h2(state)$$
-Where f(state) represents the total cost of the state, h1(state) represents the number of misplaced tiles from the goal state of the state, and h2 represents the sum of the Manhattan distances of the tiles in the state from the goal state. This evaluation function was selected because the h1 and h2 heuristics are both consistent and admissible and work well for solving a-star. The difference between a-star and local beam is that a-star considers the path cost to each state when ranking the states whereas local beam only considers the evaluation function of the successor states. In effect, local beam is "blind" to the past and to any future beyond the next step (a-star is also "blind" to the future beyond the next step) At each iteration, local beam search will calculate the total cost of all successors of all current states and order the successor states by lowest to highest cost. The algorithm will then retain the "k" best states for the next iteration. This limits the amount of states that need to be kept in memory. Local beam search with $k = 1$ is equivalent to hill climbing because the algorithm will just select the next state with the lowest evaluation function. Local beam search with $k=\infty$ is equal to breadth first search because the algorithm will expand every single state at the current depth before moving to the next depth.</p>
+<h2 id="solveBeam">solveBeam<a class="anchor-link" href="#solveBeam">&#182;</a></h2><p>The main part of the local beam search code is a loop that runs until either a solution is found or the maximum number of nodes is generated. Each iteration, all successor states of all current states are generated by finding all available moves. Each successor state is then checked to make sure that it has not already been considered. It if has not, then the algorithm will find the total cost of the state using the evaluation function (see Local Beam Search Background below). The successor states are then added to the priority queue and the queue is sorted by total cost. At the end of the iteration, the k best states (the width of the beam search) are retained from the list of successor states. The k best states then become the current states from which to generate all possible successor states on the next iteration. All nodes are added to a dictionary in order to find the solution path when the loop ends. The goal check occurs when a node is generated because the first time the goal state is encountered represents the end of local beam search. Once the solution is found, the dictionary of all nodes is passed to a function that finds and displays the solution path.</p>
+<h3 id="Local-Beam-Search-Background">Local Beam Search Background<a class="anchor-link" href="#Local-Beam-Search-Background">&#182;</a></h3><p>Local beam search implements a priority queue as in a-star search, but the evaluation function does not take into account the path cost to reach the state. The evaluation function can be defined in any manner as long as it is zero at the goal state. The evaluation function I developed for local beam search is</p>
+<p>$$f(n) = h1(state) + h2(state)$$</p>
+<p>Where f(state) represents the total cost of the state, h1(state) represents the number of misplaced tiles from the goal state of the state, and h2 represents the sum of the Manhattan distances of the tiles in the state from the goal state. This evaluation function was selected because the h1 and h2 heuristics are both consistent and admissible and work well for solving a-star.</p>
+<p>A-star considers the path cost to each state when ranking the states whereas local beam only considers the evaluation function of the successor states. In effect, local beam is "blind" to the past and to any future beyond the next step (a-star is also "blind" to the future beyond the next step.) At each iteration, local beam search will calculate the total cost of all successors of all current states and order the successor states by lowest to highest cost. The algorithm will then retain the "k" best states for the next iteration. This limits the amount of states that need to be kept in memory. Local beam search with $k = 1$ is equivalent to hill climbing because the algorithm will just select the successor state with the lowest evaluation function. Local beam search with $k=\infty$ is equal to breadth first search because the algorithm will expand every single state at the current depth before moving deeper in the search tree.</p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">local_beam</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_nodes</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">print_solution</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="c1"># Performs local beam search to solve the eight puzzle</span>
         <span class="c1"># k is the number of successor states to consider on each iteration</span>
-        <span class="c1"># The evaluation function is h1 + h2, at each iteration, the next set of nodes will be the k nodes with the lowest score</span>
+        <span class="c1"># The evaluation function is h1 + h2, at each iteration, the next set of nodes </span>
+        <span class="c1"># will be the k nodes with the lowest score</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">starting_state</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
         <span class="n">starting_state</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
@@ -12565,9 +12609,11 @@ Where f(state) represents the total cost of the state, h1(state) represents the 
         <span class="n">all_nodes</span><span class="p">[</span><span class="n">node_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="n">starting_state</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="s2">&quot;start&quot;</span><span class="p">}</span>
 
         <span class="c1"># Score for starting state</span>
-        <span class="n">starting_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_h1_heuristic</span><span class="p">(</span><span class="n">starting_state</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_h2_heuristic</span><span class="p">(</span><span class="n">starting_state</span><span class="p">)</span>
+        <span class="n">starting_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_h1_heuristic</span><span class="p">(</span><span class="n">starting_state</span><span class="p">)</span> <span class="o">+</span> 
+                          <span class="bp">self</span><span class="o">.</span><span class="n">calculate_h2_heuristic</span><span class="p">(</span><span class="n">starting_state</span><span class="p">)</span>
 
-        <span class="c1"># Available nodes is all the possible states that can be accessed from the current state stored as an (index, score) tuple</span>
+        <span class="c1"># Available nodes is all the possible states that can be accessed </span>
+        <span class="c1"># from the current state stored as an (index, score) tuple</span>
         <span class="n">available_nodes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">node_index</span><span class="p">,</span> <span class="n">starting_score</span><span class="p">)]</span>
 
         <span class="n">failure</span> <span class="o">=</span> <span class="bp">False</span>
@@ -12580,7 +12626,8 @@ Where f(state) represents the total cost of the state, h1(state) represents the 
                 <span class="k">print</span><span class="p">(</span><span class="s2">&quot;No Solution Found in first {} generated nodes&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">max_nodes</span><span class="p">))</span>
                 <span class="k">break</span>
 
-            <span class="c1"># Successor nodes are all the nodes that can be reached from all of the available states. At each iteration, this is reset to an empty list  </span>
+            <span class="c1"># Successor nodes are all the nodes that can be reached from all of the </span>
+            <span class="c1"># available states. At each iteration, this is reset to an empty list  </span>
             <span class="n">successor_nodes</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="c1"># Iterate through all the possible nodes that can be visited</span>
@@ -12605,12 +12652,25 @@ Where f(state) represents the total cost of the state, h1(state) represents the 
                             <span class="k">if</span> <span class="n">node</span><span class="p">[</span><span class="s2">&quot;parent&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">current_state</span><span class="p">:</span>
                                 <span class="n">repeat</span> <span class="o">=</span> <span class="bp">True</span>
 
+                    <span class="c1"># Check if the state is the goal state</span>
+                    <span class="c1"># If the best state is the goal, stop iteration</span>
+                    <span class="k">if</span> <span class="n">successor_state</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">goal_state</span><span class="p">:</span>
+                        <span class="n">all_nodes</span><span class="p">[</span><span class="n">node_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="n">successor_state</span><span class="p">,</span> 
+                                <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="n">current_state</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">action</span><span class="p">}</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">expanded_nodes</span> <span class="o">=</span> <span class="n">all_nodes</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">num_nodes_generated</span> <span class="o">=</span> <span class="n">node_index</span> <span class="o">+</span> <span class="mi">1</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">all_nodes</span><span class="p">,</span> <span class="n">node_index</span><span class="p">,</span> <span class="n">print_solution</span><span class="p">)</span>
+                        <span class="k">break</span>
+
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">repeat</span><span class="p">:</span>
                         <span class="n">node_index</span> <span class="o">+=</span> <span class="mi">1</span>
                         <span class="c1"># Calculate the score of the state</span>
-                        <span class="n">score</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculate_h1_heuristic</span><span class="p">(</span><span class="n">successor_state</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_h2_heuristic</span><span class="p">(</span><span class="n">successor_state</span><span class="p">))</span>
+                        <span class="n">score</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calculate_h1_heuristic</span><span class="p">(</span><span class="n">successor_state</span><span class="p">)</span> <span class="o">+</span> 
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">calculate_h2_heuristic</span><span class="p">(</span><span class="n">successor_state</span><span class="p">))</span>
                         <span class="c1"># Add the state to the list of of nodes</span>
-                        <span class="n">all_nodes</span><span class="p">[</span><span class="n">node_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="n">successor_state</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="n">current_state</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">action</span><span class="p">}</span>
+                        <span class="n">all_nodes</span><span class="p">[</span><span class="n">node_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="n">successor_state</span><span class="p">,</span> 
+                                <span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="n">current_state</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">action</span><span class="p">}</span>
+
                         <span class="c1"># Add the state to the successor_nodes list</span>
                         <span class="n">successor_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">node_index</span><span class="p">,</span> <span class="n">score</span><span class="p">))</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -12623,20 +12683,12 @@ Where f(state) represents the total cost of the state, h1(state) represents the 
             <span class="c1"># Choose only the k best successor states</span>
             <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">available_nodes</span><span class="p">):</span>
                 <span class="n">available_nodes</span> <span class="o">=</span> <span class="n">available_nodes</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span>
-
-            <span class="c1"># If the best state is the goal, stop iteration</span>
-            <span class="k">if</span> <span class="n">available_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">expanded_nodes</span> <span class="o">=</span> <span class="n">all_nodes</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">num_nodes_generated</span> <span class="o">=</span> <span class="n">node_index</span> <span class="o">+</span> <span class="mi">1</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">all_nodes</span><span class="p">,</span> <span class="n">node_index</span><span class="p">,</span> <span class="n">print_solution</span><span class="p">)</span>
-                <span class="k">break</span>
 </pre></div>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12661,12 +12713,16 @@ Where f(state) represents the total cost of the state, h1(state) represents the 
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Solution found!
 Solution Length:  4
 Solution Path [&#39;start&#39;, &#39;up&#39;, &#39;up&#39;, &#39;left&#39;, &#39;left&#39;, &#39;goal&#39;]
-Total nodes generated: 38
+Total nodes generated: 21
 
 Starting State
 -------------
@@ -12717,18 +12773,59 @@ GOAL!!!!!!!!!
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Local beam with a beam width of 10 is able to find the solution. However, local beam can get stuck in local optima if the beam width is too narrow.</p>
+<p>The following example shows randomizing the state with 20 random moves from the goal state, and finding the solution using local beam search with a beam width of 10 and a maximum of 5000 nodes.</p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">run</span> play_puzzle.py -randomizeState 20 -solveBeam 10 -maxNodes 5000
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Solution found!
+Solution Length:  8
+Solution Path [&#39;start&#39;, &#39;up&#39;, &#39;up&#39;, &#39;right&#39;, &#39;down&#39;, &#39;right&#39;, &#39;up&#39;, &#39;left&#39;, &#39;left&#39;, &#39;goal&#39;]
+Total nodes generated: 86
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Local beam with a beam width of 10 is able to find the solution. However, local beam <a href="https://www.ics.uci.edu/~rickl/courses/cs-171/cs171-lecture-slides/cs-171-05-LocalSearch.pdf">can get stuck in local optima</a> if the beam width is too narrow.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12736,18 +12833,16 @@ GOAL!!!!!!!!!
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Another requirement of this project was that the program should be able to read a sequence of commands from a text file. This was implemented in the play_puzzle.py function using an argument parser. The following examples illustrate reading commands from a text file.</p>
+<p>Another requirement of this project was that the program should be able to read a sequence of commands from a text file. This was implemented in the play_puzzle.py function using file parsing.</p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12758,7 +12853,7 @@ GOAL!!!!!!!!!
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">run</span> play_puzzle.py -readCommands &quot;tests\set_state_solve_beam.txt&quot;
@@ -12772,14 +12867,18 @@ GOAL!!!!!!!!!
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Current puzzle state:
 3b2 615 748
 Solution found!
 Solution Length:  5
 Solution Path [&#39;start&#39;, &#39;down&#39;, &#39;down&#39;, &#39;left&#39;, &#39;up&#39;, &#39;up&#39;, &#39;goal&#39;]
-Total nodes generated: 92
+Total nodes generated: 52
 </pre>
 </div>
 </div>
@@ -12788,8 +12887,7 @@ Total nodes generated: 92
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12799,8 +12897,7 @@ Total nodes generated: 92
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12811,7 +12908,7 @@ Total nodes generated: 92
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">run</span> play_puzzle.py -readCommands &quot;tests\randomize_solve_astar.txt&quot;
@@ -12825,58 +12922,62 @@ Total nodes generated: 92
 <div class="output">
 
 
-<div class="output_area"><div class="prompt"></div>
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Solution found!
 Solution Length:  6
-Solution Path [&#39;start&#39;, &#39;left&#39;, &#39;down&#39;, &#39;down&#39;, &#39;left&#39;, &#39;up&#39;, &#39;up&#39;, &#39;goal&#39;]
-Total nodes generated: 17
+Solution Path [&#39;start&#39;, &#39;left&#39;, &#39;down&#39;, &#39;right&#39;, &#39;up&#39;, &#39;left&#39;, &#39;left&#39;, &#39;goal&#39;]
+Total nodes generated: 19
 
 Starting State
 -------------
-| 3 | 2 | 0 |
+| 1 | 5 | 0 |
 -------------
-| 6 | 1 | 5 |
+| 3 | 2 | 4 |
 -------------
-| 7 | 4 | 8 |
+| 6 | 7 | 8 |
 
 Depth: 1
 -------------
-| 3 | 0 | 2 |
+| 1 | 0 | 5 |
 -------------
-| 6 | 1 | 5 |
+| 3 | 2 | 4 |
 -------------
-| 7 | 4 | 8 |
+| 6 | 7 | 8 |
 
 Depth: 2
 -------------
-| 3 | 1 | 2 |
+| 1 | 2 | 5 |
 -------------
-| 6 | 0 | 5 |
+| 3 | 0 | 4 |
 -------------
-| 7 | 4 | 8 |
+| 6 | 7 | 8 |
 
 Depth: 3
 -------------
-| 3 | 1 | 2 |
+| 1 | 2 | 5 |
 -------------
-| 6 | 4 | 5 |
+| 3 | 4 | 0 |
 -------------
-| 7 | 0 | 8 |
+| 6 | 7 | 8 |
 
 Depth: 4
 -------------
-| 3 | 1 | 2 |
+| 1 | 2 | 0 |
 -------------
-| 6 | 4 | 5 |
+| 3 | 4 | 5 |
 -------------
-| 0 | 7 | 8 |
+| 6 | 7 | 8 |
 
 Depth: 5
 -------------
-| 3 | 1 | 2 |
+| 1 | 0 | 2 |
 -------------
-| 0 | 4 | 5 |
+| 3 | 4 | 5 |
 -------------
 | 6 | 7 | 8 |
 
@@ -12897,58 +12998,54 @@ GOAL!!!!!!!!!
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Contents of "randomize_solve_astar.txt":
-<code>randomizeState 16 solveAStar h2 prettyPrintSolution</code></p>
+<p>Contents of "randomize_solve_astar.txt":</p>
+<p><code>randomizeState 16 solveAStar h2 prettyPrintSolution</code></p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The above examples demonstate that the program meets all of the requirements as specified in the project description. The final step of the project is to investigate the efficiency of the two algorithms and the two heuristics. This can best be quantified by the effective branching factor.</p>
+<p>The above examples demonstate that the program meets all of the requirements as specified in the project description. The final step of the project is to investigate the efficiency of the two algorithms and the two heuristics. Algorithmic efficiency can best be quantified by the effective branching factor.</p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Efficiency-Calculations">Efficiency Calculations<a class="anchor-link" href="#Efficiency-Calculations">&#182;</a></h2><h3 id="Effective-Branching-Factor">Effective Branching Factor<a class="anchor-link" href="#Effective-Branching-Factor">&#182;</a></h3>
+<h1 id="Efficiency-Calculations">Efficiency Calculations<a class="anchor-link" href="#Efficiency-Calculations">&#182;</a></h1><h2 id="Effective-Branching-Factor">Effective Branching Factor<a class="anchor-link" href="#Effective-Branching-Factor">&#182;</a></h2>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The branching factor for a specific node is the number of successor states generated by that node. The <a href="http://ozark.hendrix.edu/~ferrer/courses/335/f11/lectures/effective-branching.html">effective branching factor</a> is an estimate for the number of successor states generated by a typical node. The formula to find the effective branching factor is: $$ N = b_{eff} + b_{eff}^2 +  b_{eff}^3 + ... + b_{eff} ^ d $$ where N is the total number of nodes generated, $b\_{eff}$ is the effective branching factor, and d is the length of the solution path.</p>
+<p>The branching factor for a specific node is the number of successor states generated by that node. The <a href="http://ozark.hendrix.edu/~ferrer/courses/335/f11/lectures/effective-branching.html">effective branching factor</a> is an estimate for the number of successor states generated by a typical node. The formula to find the effective branching factor is:</p>
+<p>$$ N = b_{eff} + b_{eff}^2 +  b_{eff}^3 + ... + b_{eff} ^ d $$</p>
+<p>where N is the total number of nodes generated, $b\_{eff}$ is the effective branching factor, and d is the length of the solution path.</p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>To calculate the effective branching factor, I generated 100 starting states for each solution length from 2 moves to 22 moves (by 2). This was done by taking moves backwards from the goal state with the condition that no state could be repeated twice as shown in the following code.</p>
+<p>To calculate the effective branching factor, I generated 100 starting states for each solution length from 2 moves to 24 moves (by 2). This was done by taking moves backwards from the goal state with the condition that no state could be repeated twice as shown in the following code.</p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -12969,11 +13066,14 @@ GOAL!!!!!!!!!
         <span class="n">puzzle</span><span class="o">.</span><span class="n">set_goal_state</span><span class="p">()</span>
         <span class="n">states</span> <span class="o">=</span> <span class="p">[</span><span class="n">puzzle</span><span class="o">.</span><span class="n">goal_state</span><span class="p">]</span>
         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">solution_length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Retrieve the possible actions, choose one at random, </span>
+            <span class="c1"># and generate the next state by moving</span>
             <span class="n">available_actions</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">puzzle</span><span class="o">.</span><span class="n">get_available_actions</span><span class="p">(</span><span class="n">puzzle</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
             <span class="n">next_action</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">available_actions</span><span class="p">)</span>
             <span class="n">new_state</span> <span class="o">=</span> <span class="n">puzzle</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">state</span> <span class="o">=</span> <span class="n">puzzle</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="n">next_action</span><span class="p">)</span>
             <span class="c1"># If this move is not already in the sequence add it on</span>
-            <span class="c1"># This ensures that the solution length will be exactly equal to the wanted solution length</span>
+            <span class="c1"># This ensures that the solution length will be equal to the </span>
+            <span class="c1"># specified solution length</span>
             <span class="k">if</span> <span class="n">new_state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
                 <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_state</span><span class="p">)</span>
                 <span class="n">puzzle</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">new_state</span>
@@ -12985,12 +13085,11 @@ GOAL!!!!!!!!!
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For each solution path length, there are 100 starting states. To evaluate both algorithms and the two heuristics, we can then iterate through all of these starting states, recording the number of nodes generated by each algorithm. We then take the average number of nodes generated for each solution.</p>
+<p>For each solution path length, there are 100 starting states. To evaluate both algorithms and the two heuristics, I iterated through all of these starting states and solved them using the a-star search with the h1 and h2 heuristics and local beam search using a beam width of 10 and 100. I recorded the number of nodes generated by each algorithm in finding the solution and then took the average across the 100 puzzles.</p>
 <p>The average number of nodes generated for each algorithm are shown in the table below:</p>
 <center><h3> Nodes Generated for Algorithms on the Eight Puzzle </h3></center><table>
 <thead><tr>
@@ -13099,12 +13198,11 @@ GOAL!!!!!!!!!
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The effective branching factor can then be calculated by solving the equation described. This equation was solved by graphing both sides and finding the intersection of the two graphs.</p>
+<p>The effective branching factor can then be calculated by solving the equation described previously. This equation was solved by moving all terms of the equation to one side and finding the root of the equation.</p>
 <p>The branching factors of the algorithms are summarized in the table below:</p>
 <center><h3> Branching Factors of Search Algorithms on the Eight Puzzle </h3></center><table>
 <thead><tr>
@@ -13213,81 +13311,89 @@ GOAL!!!!!!!!!
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Visualization-of-Efficiency">Visualization of Efficiency<a class="anchor-link" href="#Visualization-of-Efficiency">&#182;</a></h3>
+<h2 id="Visualization-of-Efficiency">Visualization of Efficiency<a class="anchor-link" href="#Visualization-of-Efficiency">&#182;</a></h2>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Using the R programming language, we can quickly visualize the efficiency of the two algorithms and the heuristics. a_star_h1 refers to the a-star algorithm using the h1 heuristic, a_star_h2 refers to the a-star algorithm using the h2 heuristic, local_beam_100 refers to the local beam algorithm with a beam width of 100, and local_beam_10 refers to the local beam algorithm with a beam width of 10.</p>
+<p>Using the R programming language, I quickly visualized the efficiency of the two algorithms. a_star_h1 refers to the a-star algorithm using the h1 heuristic, a_star_h2 refers to the a-star algorithm using the h2 heuristic, local_beam_10 refers to the local beam algorithm with a beam width of 10, and local_beam_100 refers to the local beam algorithm with a beam width of 100.</p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<div class="highlight"><pre><span></span>ggplot<span class="p">(</span>generated<span class="p">,</span> aes<span class="p">(</span>d<span class="p">,</span> nodes_generated<span class="p">,</span> color <span class="o">=</span> algorithm<span class="p">))</span> <span class="o">+</span> geom_jitter<span class="p">(</span>size <span class="o">=</span> <span class="m">3</span><span class="p">)</span> <span class="o">+</span> geom_line<span class="p">(</span>aes<span class="p">(</span>color <span class="o">=</span> algorithm<span class="p">))</span> <span class="o">+</span> xlab<span class="p">(</span><span class="s">&quot;Solution Depth&quot;</span><span class="p">)</span> <span class="o">+</span> ylab<span class="p">(</span><span class="s">&quot;Nodes Generated&quot;</span><span class="p">)</span> <span class="o">+</span> ggtitle<span class="p">(</span><span class="s">&quot;Nodes Generated vs Solution Depth Broken Out by Algorithm&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span>ggplot<span class="p">(</span>generated<span class="p">,</span> aes<span class="p">(</span>d<span class="p">,</span> nodes_generated<span class="p">,</span> color <span class="o">=</span> algorithm<span class="p">))</span> <span class="o">+</span> 
+geom_jitter<span class="p">(</span>size <span class="o">=</span> <span class="m">3</span><span class="p">)</span> <span class="o">+</span> geom_line<span class="p">(</span>aes<span class="p">(</span>color <span class="o">=</span> algorithm<span class="p">))</span> <span class="o">+</span> 
+xlab<span class="p">(</span><span class="s">&quot;Solution Depth&quot;</span><span class="p">)</span> <span class="o">+</span> ylab<span class="p">(</span><span class="s">&quot;Nodes Generated&quot;</span><span class="p">)</span> <span class="o">+</span>
+ggtitle<span class="p">(</span><span class="s">&quot;Nodes Generated vs Solution Depth Broken Out by Algorithm&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="nodes_generated.png"></p>
+<p><img src="images/nodes_generated.png"></p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<div class="highlight"><pre><span></span>ggplot<span class="p">(</span>effective<span class="p">,</span> aes<span class="p">(</span>d<span class="p">,</span> effective_branching<span class="p">,</span> color <span class="o">=</span> algorithm<span class="p">))</span> <span class="o">+</span> geom_jitter<span class="p">(</span>size <span class="o">=</span> <span class="m">2</span><span class="p">)</span> <span class="o">+</span> geom_line<span class="p">(</span>aes<span class="p">(</span>color <span class="o">=</span> algorithm<span class="p">))</span> <span class="o">+</span> xlab<span class="p">(</span><span class="s">&quot;Solution Depth&quot;</span><span class="p">)</span> <span class="o">+</span> ylab<span class="p">(</span><span class="s">&quot;Effective Braching Factor&quot;</span><span class="p">)</span> <span class="o">+</span> ggtitle<span class="p">(</span><span class="s">&quot;Effective Branching Factor vs Solution Depth Broken Out by Algorithm&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span>ggplot<span class="p">(</span>effective<span class="p">,</span> aes<span class="p">(</span>d<span class="p">,</span> effective_branching<span class="p">,</span> color <span class="o">=</span> algorithm<span class="p">))</span> <span class="o">+</span> 
+geom_jitter<span class="p">(</span>size <span class="o">=</span> <span class="m">2</span><span class="p">)</span> <span class="o">+</span> geom_line<span class="p">(</span>aes<span class="p">(</span>color <span class="o">=</span> algorithm<span class="p">))</span> <span class="o">+</span> 
+xlab<span class="p">(</span><span class="s">&quot;Solution Depth&quot;</span><span class="p">)</span> <span class="o">+</span> ylab<span class="p">(</span><span class="s">&quot;Effective Braching Factor&quot;</span><span class="p">)</span> <span class="o">+</span> 
+ggtitle<span class="p">(</span><span class="s">&quot;Effective Branching Factor vs Solution Depth Broken Out by Algorithm&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="effective_branching.png"></p>
+<p><img src="images/effective_branching.png"></p>
 
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
 <div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Conclusions">Conclusions<a class="anchor-link" href="#Conclusions">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The eight puzzle is a wonderful problem for exploring the basics of search algorithms. In this project, I solved the eight puzzle using a-star seach with two different heuristics, and using local beam with two beam widths. Further work on the eight puzzle could involve solving the puzzle using a-star search informed by a more sophisticated heuristic such as <a href="https://cse.sc.edu/~mgv/csce580sp15/gradPres/HanssonMayerYung1992.pdf">that developed by</a> Hanson et al in 1992. Other intriuging avenues for exploring the eight puzzle could involve training a neural network to solve the puzzle using the sequence of actions as a label and the starting state as a feature. Graduate work <a href="http://homepages.cae.wisc.edu/~ece539/fall13/project/Peterson_rpt.pdf">done by Peterson in 2013</a> used neural networks to attempt to derive a better heuristic for the eight puzzle. I would like to acknowledge the help provided by the resources linked to in the report as well as the textbook <a href="http://aima.cs.berkeley.edu/">Artificial Intelligence: A Modern Approach</a> written by Russell and Norvig. I thoroughly enjoyed developing an eight puzzle solver using search algorithms and am looking forward to greater challenges in the field of artificial intelligence.</p>
 
 </div>
 </div>
-</div>
-
 </div>
     </div>
   </div>
 </body>
+
+ 
+
+
 </html>

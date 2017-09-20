@@ -377,6 +377,7 @@ class Puzzle():
         available_nodes = [(node_index, starting_score)]
                 
         failure = False
+        success = False
 
         while not failure:
 
@@ -411,6 +412,17 @@ class Puzzle():
                             if node["parent"] == current_state:
                                 repeat = True
 
+                    # Check if the state is the goal state
+                    # If the best state is the goal, stop iteration
+                    if successor_state == self.goal_state:	
+                        all_nodes[node_index] = {"state": successor_state, 
+                                "parent": current_state, "action": action}
+                        self.expanded_nodes = all_nodes
+                        self.num_nodes_generated = node_index + 1
+                        self.success(all_nodes, node_index, print_solution)
+                        success = True
+                        break
+
                     if not repeat:
                         node_index += 1
                         # Calculate the score of the state
@@ -429,19 +441,8 @@ class Puzzle():
             # Choose only the k best successor states
             if k < len(available_nodes):
                 available_nodes = available_nodes[:k]
-
-            # If the best state is the goal, stop iteration
-            try:
-                if available_nodes[0][1] == 0:
-
-                  self.expanded_nodes = all_nodes
-                  self.num_nodes_generated = node_index + 1
-                  self.success(all_nodes, node_index, print_solution)
-                  break
-            except: 
-                print("No more available nodes")
-                break
-                 
+            if success == True:
+            	break  
                 
     def success(self, node_dict, num_nodes_generated, print_solution=True):
         # Once the solution has been found, prints the solution path and the length of the solution path
