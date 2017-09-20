@@ -29,6 +29,10 @@ if __name__=="__main__":
 	if args.randomizeState:
 		puzzle.randomize_state(args.randomizeState)
 
+	if args.printState:
+		print("Current puzzle state:")
+		puzzle.print_state()
+
 	if args.move:
 		puzzle.state = puzzle.move(puzzle.state, args.move)	
 
@@ -44,9 +48,7 @@ if __name__=="__main__":
 		else:
 			puzzle.local_beam(k = args.solveBeam)
 
-	if args.printState:
-		print("Current puzzle state:")
-		puzzle.print_state()
+	
 
 	if args.prettyPrintState:
 		puzzle.pretty_print_state(puzzle.state)

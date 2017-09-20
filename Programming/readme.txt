@@ -1,12 +1,9 @@
-Welcome to the eight puzzle solver. 
-The Eight Puzzle is a Python class that contains a representation of the 
-puzzle as well as two different methods for solving it: astar and local 
-beam search. While this may be a simplistic toy environment, astar search is 
-used by Google Maps to find the best route between points and is the optimal
-algorithm for search provided the heuristic is consistent (which implies
-admissibility)
+# Welcome to the eight puzzle solver. 
 
-eight_puzzle.py contains the Puzzle class. play_puzzle.py contains the command
+# Files 
+
+eight_puzzle.py contains the Puzzle class and all required methods. 
+play_puzzle.py contains the command
 line parser and file reader for interacting with the puzzle. 
 
 When the puzzle is initialized, it will be set to the goal state.
