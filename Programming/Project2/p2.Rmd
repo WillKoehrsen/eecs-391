@@ -46,17 +46,21 @@ Next, we can plot the variables to see the ranges within each species. We are as
 only the second and third classes, veriscolor and virginica. 
 
 ```{r}
+# Create a subset with only the relevant classes
 iris_subset <- dplyr::filter(iris, species == 'versicolor' | species == 'virginica')
 
+# Plot the features colored by class
 ggplot(iris_subset, aes(x = sepal_length, y = sepal_width, color = species)) + 
   geom_jitter() + xlab('Sepal Length (cm)') + 
   ylab('Sepal Width (cm)') + 
-  ggtitle('Sepal Width vs Length by Iris Species') + theme_classic(12)
+  ggtitle('Sepal Width vs Length by Iris Species') + theme_classic(12) + 
+  scale_color_manual(values = c('firebrick', 'darkgreen'))
 
 ggplot(iris_subset, aes(x = petal_length, y = petal_width, color = species)) + 
   geom_jitter() + xlab('Petal Length (cm)') + 
   ylab('Petal Width (cm)') + 
-  ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12)
+  ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12) + 
+  scale_color_manual(values = c('firebrick', 'darkgreen'))
 
 ```
 We can see that there is clearly a line that can separate the two classes
@@ -76,7 +80,8 @@ plot_db <- function(iris_data, m, b) {
     geom_jitter() + geom_abline(slope = m, intercept = b, color = 'blue', lwd = 1.1) + 
     xlab('Petal Length (cm)') + 
   ylab('Petal Width (cm)') + 
-  ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12)
+  ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12) + 
+    scale_color_manual(values = c('firebrick', 'darkgreen'))
 }
 
 m <- -0.5
@@ -89,35 +94,41 @@ plot_db(iris_subset, m, b)
 ## C. Define a Simple Threshold Classifier Using the above Decision Boundary
 
 The following function takes in a petal length and a petal width and returns 
-the class (species) of the iris.
+the class (species) of the iris. The threshold classifier mutliplies the given 
+weights by the observation features, and classifies based on a threshold of
+zero. The weights hav eben selected to correspond to the decision boundary
+plotted above. 
 
 ```{r}
 # Function takes in a petal length, petal width, and iris data set
 # and makes a class prediction. The function also plots the 
 # data and the new observation by default
 classify <- function(petal_length, petal_width, iris_data, 
-                     plot_results = TRUE, m = -0.5, b = 4) {
-  if ((petal_length * 0.5 + petal_width) < 4) {
+                     plot_results = TRUE, w0 = -4, w1 = 0.5, w2 = 1) {
+  
+  if ( (petal_length * w1 + petal_width * w2 + w0) < 0) {
     class = 'versicolor'
-  } else if ((petal_length * 0.5 + petal_width) > 4) {
+    
+  } else if ((petal_length * w1 + petal_width * w2 + w0) >= 0) {
     class = 'virginica'
+    
   } else {
     class = sample(c('versicolor', 'virgnica'), size = 1)
   }
   
   
-  iris_data$prediction <- FALSE
+  iris_data$set <- 'train'
   
   iris_data <- add_row(iris_data, petal_width = petal_width, petal_length = petal_length,
-                       sepal_width = NA, sepal_length = NA, species = class, prediction = TRUE)
+                       sepal_width = NA, sepal_length = NA, species = class, set = 'prediction')
   if (plot_results) {
-  print(ggplot(iris_data, aes(x = petal_length, y = petal_width, 
-                              color = species, shape = prediction)) + 
+  print(ggplot(iris_data, aes(x = petal_length, y = petal_width, color = species, shape = set)) + 
     geom_jitter() + 
-      geom_abline(slope = m, intercept = b, color = 'blue', lwd = 1.1) + 
+      geom_abline(slope = -w1/w2, intercept = -w0/w2, color = 'blue', lwd = 1.1) + 
     xlab('Petal Length (cm)') + 
   ylab('Petal Width (cm)') + 
-  ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12))
+  ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12) + 
+      scale_color_manual(values = c('firebrick', 'darkgreen')))
   }
     
   print(sprintf('The class prediction is: %s', class))
@@ -214,7 +225,8 @@ circular_db <- function(center, radius, iris_data) {
     geom_circle(data = circ_df, aes(x0 = x, y0 = y, r = radius)) + coord_fixed() +
     xlab('Petal Length (cm)') + 
   ylab('Petal Width (cm)') + 
-  ggtitle('Petal Width vs Length by Iris Species with Circular DB') + theme_classic(12)
+  ggtitle('Petal Width vs Length by Iris Species with Circular DB') + theme_classic(12) + 
+    scale_color_manual(values = c('firebrick', 'darkgreen'))
   
   print(p) 
   
@@ -228,10 +240,12 @@ The next step is to test the classifcation accuracy of the circle with several
 values for the center and radius.
 
 ```{r}
+# Test classification accuracy with different boundaries
 circular_db(center = c(5, 2), radius = 1.5, iris_data = iris_subset)
 
 circular_db(center = c(5.5, 2), radius = 0.5, iris_data = iris_subset)
 
+# Improve accutracy with manual inspection
 circular_db(center = c(6, 2), radius = 1, iris_data = iris_subset)
 
 ```
@@ -242,4 +256,330 @@ a perfect model is not possible with this data.
 
 # Objective Function
 
+## A. Mean Squared Error 
+
+The next task is to write a function which calculates the mean-squared error for a given 
+decision boundary. To calculate a mean-squared error, I will need to replace the threshold
+activation with a sigmoid function that outputs class probabilities. The mean-squared 
+error is then computed as the average of the squared residuals of the predictions.
+The residuals are the difference between the correct answer and the predicted
+output. The objective is to minimize the mean squared error by selecting
+the best decision boundary. 
+
+```{r}
+# Sigmoid function
+sigmoid <- function(x) {return(1 / (1 + exp(-x)) )}
+
+# Takes in data with correct values (labels) and weights of decision boundary
+# Weights should be in form (w0, w1, w2) and labels are 0 (versicolor) 
+# or 1 (virginica).  
+create_model <- function(iris_data, weights, plot_results = TRUE) {
+  
+  iris_data$intercept <- 1
+  
+  # Enforce column order for features and create label vector
+  data <- dplyr::select(iris_data, intercept, petal_length, petal_width)
+  labels <- ifelse(iris_data$species == 'versicolor', 0, 1)
+  
+  predictions <- c()
+  
+  # Make predictions on all of the data
+  for (i in 1:nrow(data)) {
+    prediction <- sigmoid(as.numeric(data[i, ]) %*% weights)[[1]]
+    predictions <- c(predictions, prediction)
+  }
+  
+  # Calculate the mean squared error
+  mse <- mean( (predictions - labels) ^ 2)
+  
+  if (plot_results) {
+  print(ggplot(iris_data, aes(x = petal_length, y = petal_width, color = species)) + 
+    geom_jitter() + 
+      geom_abline(slope = -weights[2]/weights[3], intercept = -weights[1]/weights[3], 
+                  color = 'blue', lwd = 1.1) + 
+    xlab('Petal Length (cm)') + 
+  ylab('Petal Width (cm)') + 
+  ggtitle(sprintf('w0: %0.2f, w1: %0.2f, w2: %0.2f', weights[1], weights[2], weights[3]))
+  + theme_classic(12) + 
+      scale_color_manual(values = c('firebrick', 'darkgreen')))
+  }
+  
+  print(sprintf('MSE on iris data set: %0.4f', mse))
+}
+
+# Example application
+weights <- c(-4, 0.5, 1)
+
+create_model(iris_subset, weights)
+```
+## B. Plot a decision boundary with a high and low MSE
+
+The low MSE corresponds to the linear decision boundary previously drawn that 
+was determined by repeated testing. 
+A high MSE can also be found by some experimentation. 
+
+```{r}
+# Low MSE
+create_model(iris_subset, weights = c(-4.6, 0.6, 1.1))
+
+# High MSE 
+create_model(iris_subset, weights = c(-4.5, 0.9, 1.1))
+```
+## C. Derivation of MSE with respect to weights
+
+Class probabilities of an observation are made with the following equation:
+
+$$ p_n = \sigma (w_0  + w_1 * length_n + w_2 * width_n)$$ 
+Where $\sigma$ is the sigmoid activation function. The mean squared error
+is therefore 
+
+$$mse = \frac{1}{N} \sum\limits_{n=1}^{N} ( \sigma(w_0 + w_1 * L_n + w_2 * W_n) - y_n)^2 $$ 
+Where $y_n$ is the known label for the observation. M refers to the total number
+of observations (data points) which in this problem is 100. The sigmoid activation function
+has the nice feature that the derivative is:
+
+$$\frac{d\sigma(x)}{dx} = \sigma(x) * (1 - \sigma(x))$$ 
+To simply the equation, we can define the weight row vector as 
+$$\textbf{w} = [w_o, w_1, w_2]$$ 
+and all of the observations as a matrix
+
+$$\textbf{x} = \left( \begin{array}{ccc}
+1 & L_1 & W_1 \\
+1 & L_2 & W_2 \\
+\vdots & \vdots & \vdots\\
+1 & L_m & W_m \end{array} \right)$$ 
+
+The labels are a column vector 
+
+$$\textbf{y} = \begin{bmatrix}
+           y_{1} \\
+           y_{2} \\
+           \vdots \\
+           y_{n}
+         \end{bmatrix}$$
+         
+The MSE is now expressed as
+
+$$mse = \frac{1}{N}  ( \sigma(\textbf{x} * \textbf{w}) - \textbf{y})^2$$
+The gradient of the mse with respect to the weights is
+
+$$\frac{\partial(mse)}{d\textbf{w}} = \frac{2}{N} * \textbf{x} * (1 - \sigma(\textbf{x} * \textbf{w}) * ( \sigma(\textbf{x} * \textbf{w}) - \textbf{y}) $$
+If we substitute in the probability already calculated, the equation becomes:
+
+$$\frac{\partial(mse)}{d\textbf{w}} = \frac{2}{N} * \textbf{x} * (1 - \textbf{p}) * (\textbf{p} - \textbf{y}) $$
+
+## D. Scalar versus Vector Gradient
+
+The full scalar gradient for weight $w_i$ is 
+
+$$\frac{\partial(mse)}{\partial{w_i}} = \frac{2}{N} * \sum\limits_{n=1}^{N} ( x_{i,n} *  (1 - \sigma(\textbf{x}_n * \textbf{w})*(\sigma(\textbf{x}_n * \textbf{w}) - y_n)) $$
+In this equation, n is the observation, and i is the weight. In this problem,
+there are three weights and 100 observations, so for each iteration, we would need to 
+perform a sum over all 100 observations 3 separate times to update the three weights.
+
+The computation requirements can be greatly reduced by expressing the observations 
+as a (100 by 3) matrix, the weights as a (3 by 1) vector, and the labels as a 
+(100 by 1) vector. The gradient of the mean squared error with respect to the weights:
+
+$$\frac{\partial(mse)}{\partial\textbf{w}} = \frac{2}{N}  * (1 - \sigma(\textbf{x} * \textbf{w})) * (\sigma(\textbf{x} * \textbf{w}) - \textbf{y}) * \textbf{x}$$
+
+The gradient update rule updates the weights on each iteration
+
+$$\textbf{w}_{t+1} = \textbf{w}_t - \epsilon * \frac{\partial(mse)}{\partial(\textbf{w}_t)}$$ 
+## E. Calculate the Gradient and Update the Weights
+
+The algorithm is relatively straightforward to implement. I can initialize the 
+weights, make the predictions, calculate the gradient, update the weights, and repeat
+the process with the updated weights. 
+
+```{r}
+# Function takes in the iris data set, initial weights, number of iterations, 
+# and the learning rate
+grad_descent <- function(iris_data, initial_weights, n_steps = 5, 
+                         plot_decision = TRUE, plot_learning = FALSE,
+                         learning_rate = 0.01) {
+  
+  # Add intercept to data and determine n
+  iris_data$intercept <- 1
+  n_obs <- nrow(iris_data)
+  
+  # Enforce column order for features and create label vector
+  data <- dplyr::select(iris_data, intercept, petal_length, petal_width)
+  labels <- ifelse(iris_data$species == 'versicolor', 0, 1)
+  
+  weights <- initial_weights
+  data <- data.matrix(data)
+  
+  # Variables to hold metrics
+  results_df <- c()
+  all_mse <- c()
+  
+  for (i in 1:n_steps) {
+    
+    # Make predictions and calculate errors
+    predictions <- sapply(data %*% weights, sigmoid)
+    errors <- predictions - labels
+   
+    # Record mean squared error
+    mse <- mean((errors) ^ 2)
+    all_mse <- c(all_mse, mse)
+    
+    # Calculate the gradient
+    gradient <- (2 / n_obs) * matrix((1 - predictions) * (errors), ncol = n_obs) %*% data
+    
+    # Update the weights
+    weights <- as.numeric(weights - learning_rate * gradient)
+    
+    print(sprintf('Iteration: %0.0f, mse: %0.4f', i, mse))
+    
+    # Plot the decision boundary if specified
+    if (plot_decision) {
+    p1 <- ggplot(iris_data, aes(x = petal_length, y = petal_width, color = species)) +
+      geom_jitter() +
+        geom_abline(slope = -weights[2]/weights[3], intercept = -weights[1]/weights[3],
+                    color = 'blue', lwd = 1.1) +
+      xlab('Petal Length (cm)') +
+    ylab('Petal Width (cm)') +
+    ggtitle(sprintf('Iteration: %0.0f MSE: %0.4f    w0: %0.2f, w1: %0.2f, w2: %0.2f', 
+                    i, mse, weights[1], weights[2], weights[3])) + 
+      theme_classic(12) + coord_cartesian(xlim = c(2.5, 8), ylim = c(1.0, 4.0)) + 
+        scale_color_manual(values = c('firebrick', 'darkgreen'))
+    
+    print(p1)
+    }
+  }
+  
+  results_df$mse <- all_mse
+  results_df$iteration <- 1:n_steps
+    
+    # Plot the learning curve if specified
+    if (plot_learning) {
+      p2 <- ggplot(results_df, aes(x = iteration, y = all_mse)) + 
+        geom_point(size = 1.2, col = 'darkgreen', shape = 2) + 
+        geom_line(lwd = 1.2, col = 'darkgreen') + ylab('Mean Squared Error') + 
+        ggtitle(sprintf('Learning Curve with step: %0.4f', learning_rate)) + 
+        theme_classic(12)
+    }
+  
+}
+  
+grad_descent(iris_subset, initial_weights = c(-6, 0.5, 1))  
+
+grad_descent(iris_subset, initial_weights = c(-3.5, 0.5, 1))
+
+```
+
+As can be seen, the algorithm successfully updates the decision boundary
+to decrease the mean squared error with each iteration. If the decision boundary
+starts off too low, it is raised higher, and when it starts off too high,
+it is slowly lower. With enough steps and a small enough learning rate, 
+the algorithm will converge on the optimal decision boundary. 
+
 # Optimization Using Gradient Descent
+
+## A. Implement Gradient Descent
+
+The function above already implements gradient descent on the iris data set. 
+To perform the algorithm, the function needs a set of initial weights (w0, w1, w2), 
+a learning rate (the default is 0.01), a number of iterations (the default is 5). 
+I need to modify the function to plot the learning curve over time. 
+
+```{r}
+# Function takes in the iris data set, initial weights, number of iterations, 
+# and the learning rate
+grad_descent_complete <- function(iris_data, initial_weights, n_steps = 5, 
+                         plot_decision = TRUE, plot_learning = TRUE,
+                         learning_rate = 0.01) {
+  
+  # Add intercept to data and determine n
+  iris_data$intercept <- 1
+  n_obs <- nrow(iris_data)
+  
+  # Enforce column order for features and create label vector
+  data <- dplyr::select(iris_data, intercept, petal_length, petal_width)
+  labels <- ifelse(iris_data$species == 'versicolor', 0, 1)
+  
+  weights <- initial_weights
+  data <- data.matrix(data)
+  
+  # Variables to hold metrics
+  results_df <- as.data.frame(matrix(ncol = 5, nrow = n_steps))
+  names(results_df) <- c('iteration', 'mse', 'w0', 'w1', 'w2')
+  
+  for (i in 1:n_steps) {
+    
+    # Make predictions and calculate errors
+    predictions <- sapply(data %*% weights, sigmoid)
+    errors <- predictions - labels
+   
+    # Record mean squared error
+    mse <- mean((errors) ^ 2)
+    all_mse <- c(all_mse, mse)
+    
+    # Calculate the gradient
+    gradient <- (2 / n_obs) * matrix((1 - predictions) * (errors), ncol = n_obs) %*% data
+    
+    # Record results for plotting
+    results_df[i, 'iteration'] = i
+    results_df[i, 'mse'] = mse
+    results_df[i, 'w0'] = weights[1]
+    results_df[i, 'w1'] = weights[2]
+    results_df[i, 'w2'] = weights[3]
+    
+    # Update the weights
+    weights <- as.numeric(weights - learning_rate * gradient)
+    
+    print(sprintf('Iteration: %0.0f, mse: %0.4f', i, mse))
+    
+    # Plot the decision boundary if specified
+    if (plot_decision) {
+    p1 <- ggplot(iris_data, aes(x = petal_length, y = petal_width, color = species)) +
+      geom_jitter() +
+        geom_abline(slope = -weights[2]/weights[3], intercept = -weights[1]/weights[3],
+                    color = 'blue', lwd = 1.1) +
+      xlab('Petal Length (cm)') +
+    ylab('Petal Width (cm)') +
+    ggtitle(sprintf('Iteration: %0.0f MSE: %0.4f    w0: %0.2f, w1: %0.2f, w2: %0.2f', 
+                    i, mse, weights[1], weights[2], weights[3])) + 
+      theme_classic(12) + coord_cartesian(xlim = c(2.5, 8), ylim = c(1.0, 4.0)) + 
+        scale_color_manual(values = c('firebrick', 'darkgreen'))
+    
+    print(p1)
+    
+    }
+    
+    # Plot the learning curve if specified
+    if (plot_learning) {
+      p2 <- ggplot(results_df, aes(x = iteration, y = mse)) + 
+        geom_point(size = 1.2, col = 'darkgreen', shape = 2) + 
+        geom_line(lwd = 1.2, col = 'darkgreen') + ylab('Mean Squared Error') + 
+        ggtitle(sprintf('Learning Curve Iteration: %0.0f with step: %0.4f',
+                        i, learning_rate)) + 
+        theme_classic(12)
+      
+      print(p2)
+    }
+    
+  }
+  
+  return(results)
+}
+```
+
+```{r}
+grad_descent_complete(iris_subset, initial_weights = c(-6, 0.4, 1.2), 
+                      n_steps = 2, learning_rate = 0.005)
+
+```
+
+I will change the call to the function to display the learning curve
+after the algorithm has completed iterations. 
+
+```{r}
+# Start off with a high decision boundary
+
+
+# Start with a low decision boundary
+
+
+```
