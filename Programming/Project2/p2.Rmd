@@ -1,0 +1,245 @@
+---
+title: "EECS 391 Programming Assignment Two"
+author: "Will Koehrsen"
+date: "December 9, 2017"
+output:
+  pdf_document:
+    toc: true
+    number_sections: true
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(root_dir = 'C:/Users/Will Koehrsen/Documents/eecs-391/Programming/Project2')
+
+library(tidyverse)
+library(ggthemes)
+library(ggforce)
+```
+
+# Linear Decision Boundaries
+
+## A. Inspection and Plotting
+
+The first step is to inspect the iris data set. I can load in the data into a dataframe
+and perform some simple explorations. 
+
+```{r}
+# Load in data into a dataframe
+iris <- read_csv('irisdata.csv')
+
+# Structure of the data
+str(iris, give.attr = FALSE)
+```
+We can see there are 150 observations of 5 different variables. The variables are sepal length,
+sepal width, petal length, petal width, and species. For the iris data set, the four numerical
+measurements are the features and the 
+species is the label. 
+
+```{r}
+table(iris$species)
+```
+There are three species, each with 50 observations. 
+
+Next, we can plot the variables to see the ranges within each species. We are asked to plot
+only the second and third classes, veriscolor and virginica. 
+
+```{r}
+iris_subset <- dplyr::filter(iris, species == 'versicolor' | species == 'virginica')
+
+ggplot(iris_subset, aes(x = sepal_length, y = sepal_width, color = species)) + 
+  geom_jitter() + xlab('Sepal Length (cm)') + 
+  ylab('Sepal Width (cm)') + 
+  ggtitle('Sepal Width vs Length by Iris Species') + theme_classic(12)
+
+ggplot(iris_subset, aes(x = petal_length, y = petal_width, color = species)) + 
+  geom_jitter() + xlab('Petal Length (cm)') + 
+  ylab('Petal Width (cm)') + 
+  ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12)
+
+```
+We can see that there is clearly a line that can separate the two classes
+on the plot of Petal Length vs Width. A simple linear decision boundary
+should have decent accuracy in separating the classes. 
+
+## B. Plot A Linear Decision Boundary
+
+The following function plots a linear decision boundary over the data. 
+The slope and intercept are chosen by inspecting the data and trying to choose a 
+line to minimize the classification error. 
+
+```{r}
+# Function to plot a linear decision boundary given slope and intercept
+plot_db <- function(iris_data, m, b) {
+  ggplot(iris_data, aes(x = petal_length, y = petal_width, color = species)) + 
+    geom_jitter() + geom_abline(slope = m, intercept = b, color = 'blue', lwd = 1.1) + 
+    xlab('Petal Length (cm)') + 
+  ylab('Petal Width (cm)') + 
+  ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12)
+}
+
+m <- -0.5
+b <- 4
+# Plot a selected boundary
+plot_db(iris_subset, m, b)
+
+```
+
+## C. Define a Simple Threshold Classifier Using the above Decision Boundary
+
+The following function takes in a petal length and a petal width and returns 
+the class (species) of the iris.
+
+```{r}
+# Function takes in a petal length, petal width, and iris data set
+# and makes a class prediction. The function also plots the 
+# data and the new observation by default
+classify <- function(petal_length, petal_width, iris_data, 
+                     plot_results = TRUE, m = -0.5, b = 4) {
+  if ((petal_length * 0.5 + petal_width) < 4) {
+    class = 'versicolor'
+  } else if ((petal_length * 0.5 + petal_width) > 4) {
+    class = 'virginica'
+  } else {
+    class = sample(c('versicolor', 'virgnica'), size = 1)
+  }
+  
+  
+  iris_data$prediction <- FALSE
+  
+  iris_data <- add_row(iris_data, petal_width = petal_width, petal_length = petal_length,
+                       sepal_width = NA, sepal_length = NA, species = class, prediction = TRUE)
+  if (plot_results) {
+  print(ggplot(iris_data, aes(x = petal_length, y = petal_width, 
+                              color = species, shape = prediction)) + 
+    geom_jitter() + 
+      geom_abline(slope = m, intercept = b, color = 'blue', lwd = 1.1) + 
+    xlab('Petal Length (cm)') + 
+  ylab('Petal Width (cm)') + 
+  ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12))
+  }
+    
+  print(sprintf('The class prediction is: %s', class))
+}
+
+# Example of new data point
+classify(petal_length = 2.5, petal_width = 5, iris_data = iris_subset) 
+
+# Another example of new data point
+classify(petal_length = 2.5, petal_width = 2.5, iris_data = iris_subset) 
+```
+To demonstrate the classification function, I will plot a few of the actual points 
+in the data. 
+
+```{r}
+# Plot a known versicolor example
+iris_subset$species[6]
+petal_length <- iris_subset$petal_length[6]
+petal_width <- iris_subset$petal_width[6]
+
+classify(petal_length, petal_width, iris_subset)
+
+
+# Plot a known virginica example
+iris_subset$species[66]
+petal_length <- iris_subset$petal_length[66]
+petal_width <- iris_subset$petal_width[66]
+
+classify(petal_length, petal_width, iris_subset)
+```
+
+The linear classifier correctly identifies both classes. There are several instances near the 
+boundary the model mis-classifies because the decision boundary is not entirely linear.
+
+## D. Define a circle decision boundary using a single point as center
+
+The function below takes a center for the circle and a radius and draws a 
+circular decision boundary. Points are classifed using the Euclidean distance.
+If points are within the raidus from the center of the circle in terms of
+the Euclidean distance, then they are within the circle. The class for points within the 
+circle is determined by the iris class with the most points in the cirlce. 
+Accuracy is assessed as the number of points correctly classified divided by the 
+total number of iris observations. 
+
+```{r}
+# Takes a circle center (c(x, y)) and a circle radius and predicts the classes
+# of the iris_data. Prints the accuracy of the circular classifier
+# and displays a plot with the classifier and original data.
+circular_db <- function(center, radius, iris_data) { 
+  classes <- c()
+  
+  # Make a classification for each pointbased on the circle parameters
+  for (i in 1:nrow(iris_data)) {
+    length <- iris_data[[i, 'petal_length']]
+    width <- iris_data[[i, 'petal_width']]
+    
+    # Check if point in circle using Euclidean distance
+    in_circle <- ifelse(dist(matrix(c(center[1], center[2], length, width), 
+                                    nrow = 2, ncol = 2, byrow = TRUE)) < radius, 1, 0)
+    classes <- c(classes, in_circle)
+  }
+  
+  iris_data$in_circle <- classes
+  
+
+  virginica_in <- sum(iris_data$in_circle == 1 & 
+                        iris_data$species == 'virginica')
+  
+  versicolor_in <- sum(iris_data$in_circle == 1 & 
+                         iris_data$species == 'versicolor')
+  
+  # Set in circle class to class with more points in circle
+  # If tied for number, choose a random class
+  # The tie also handles the cases where no points 
+  # are in circle and all points are in circle
+  circle_class <- ifelse(virginica_in > versicolor_in, 'virginica', 
+                         ifelse(virginica_in < versicolor_in, 'versicolor', 
+                                sample(c('virginica', 'versicolor'), 1)))
+  
+  # The non-circle class is the other class
+  non_circle_class <- ifelse(circle_class == 'virginica', 'versicolor', 'virginica')
+  
+  # Prediction is the label of in circle or not 
+  iris_data$prediction <- ifelse(iris_data$in_circle == 1, circle_class, non_circle_class)
+  
+  # Accuracy is the average of correct predictions
+  accuracy <- sum(iris_data$prediction == iris_data$species) / nrow(iris_data)
+
+  # Create a dataframe for plotting the circle
+  circ_df <- data.frame(x = center[1], y = center[2], radius = radius)
+  
+  # Plot the data and the circular decision boundary
+  p <- ggplot(iris_subset) + geom_jitter(aes(x = petal_length, y = petal_width, color = species)) + 
+    geom_circle(data = circ_df, aes(x0 = x, y0 = y, r = radius)) + coord_fixed() +
+    xlab('Petal Length (cm)') + 
+  ylab('Petal Width (cm)') + 
+  ggtitle('Petal Width vs Length by Iris Species with Circular DB') + theme_classic(12)
+  
+  print(p) 
+  
+ print(sprintf('Accuracy: %0.2f%% with circle at %0.2f, %0.2f with radius %0.2f.',
+               accuracy * 100, center[1], center[2], radius))
+  }
+
+```
+
+The next step is to test the classifcation accuracy of the circle with several
+values for the center and radius.
+
+```{r}
+circular_db(center = c(5, 2), radius = 1.5, iris_data = iris_subset)
+
+circular_db(center = c(5.5, 2), radius = 0.5, iris_data = iris_subset)
+
+circular_db(center = c(6, 2), radius = 1, iris_data = iris_subset)
+
+```
+
+The final circle achieves the best accuracy. The performance could be further improved
+by careful adjujstment of the decision boundary, but as with the linear classifier,
+a perfect model is not possible with this data. 
+
+# Objective Function
+
+# Optimization Using Gradient Descent
