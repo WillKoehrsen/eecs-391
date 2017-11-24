@@ -484,12 +484,15 @@ To perform the algorithm, the function needs a set of initial weights (w0, w1, w
 a learning rate (the default is 0.01), a number of iterations (the default is 5). 
 I need to modify the function to plot the learning curve over time. 
 
+## B. Plot the decision boundary and learning curve
+
 ```{r}
 # Function takes in the iris data set, initial weights, number of iterations, 
-# and the learning rate
+# learning rate, and tolerance
+# Return is a dataframe that can be used for plotting
+# the decision boundary and learning curve
 grad_descent_complete <- function(iris_data, initial_weights, n_steps = 5, 
-                         plot_decision = TRUE, plot_learning = TRUE,
-                         learning_rate = 0.01) {
+                         learning_rate = 0.01, tolerance = 0.005) {
   
   # Add intercept to data and determine n
   iris_data$intercept <- 1
@@ -506,6 +509,7 @@ grad_descent_complete <- function(iris_data, initial_weights, n_steps = 5,
   results_df <- as.data.frame(matrix(ncol = 5, nrow = n_steps))
   names(results_df) <- c('iteration', 'mse', 'w0', 'w1', 'w2')
   
+  # Iterate for the specified number of steps
   for (i in 1:n_steps) {
     
     # Make predictions and calculate errors
@@ -514,11 +518,10 @@ grad_descent_complete <- function(iris_data, initial_weights, n_steps = 5,
    
     # Record mean squared error
     mse <- mean((errors) ^ 2)
-    all_mse <- c(all_mse, mse)
     
     # Calculate the gradient
     gradient <- (2 / n_obs) * matrix((1 - predictions) * (errors), ncol = n_obs) %*% data
-    
+
     # Record results for plotting
     results_df[i, 'iteration'] = i
     results_df[i, 'mse'] = mse
@@ -526,60 +529,157 @@ grad_descent_complete <- function(iris_data, initial_weights, n_steps = 5,
     results_df[i, 'w1'] = weights[2]
     results_df[i, 'w2'] = weights[3]
     
+    
+    # First stopping criteria
+    if (sqrt(sum(gradient ^ 2)) < tolerance) {
+      print("Minimum Tolerance Reached.")
+      return(results_df)
+    }
+    
+    # Second stopping criteria
+    if (mse > min(results_df$mse, na.rm = TRUE)) {
+      print('MSE Inceasing.')
+      return(results_df)
+    }
+    
     # Update the weights
     weights <- as.numeric(weights - learning_rate * gradient)
     
-    print(sprintf('Iteration: %0.0f, mse: %0.4f', i, mse))
-    
-    # Plot the decision boundary if specified
-    if (plot_decision) {
-    p1 <- ggplot(iris_data, aes(x = petal_length, y = petal_width, color = species)) +
+    # Display progress every 50 iterations
+    if (i %% 50 == 0) {print(sprintf('Iteration: %0.0f, mse: %0.4f', i, mse))
+      
+    }
+  }
+  # Max iterations reached
+  print('Maximum number of iterations reached.')
+  return(results_df)
+}
+```
+
+## C. Show results from the iris data set
+
+I will show two different results of the algorithm, one starting with 
+an initally too high decision boundary, and the other with an initially too low
+decision boundary. The algorithms are run until the maximum number of steps 
+is reached, or thesquare of the sum of the gradients is below the specified
+olerance. The results can then be plotted to visualize the change in decision 
+boundary and the learning curve. 
+
+```{r}
+# Start with a high decision boundary
+results_high <- grad_descent_complete(iris_subset, initial_weights = c(-6, 0.4, 1.2), 
+                      n_steps = 500, learning_rate = 0.005, tolerance = 0.005)
+
+# Start with a low decision boundary
+results_low <- grad_descent_complete(iris_subset, initial_weights = c(-3.6, 0.6, 1.2), 
+                      n_steps = 500, learning_rate = 0.005, tolerance = 0.005)
+
+```
+
+The model that started with the high decision boundary continued to improve until
+the maxmium number of iterations was reached while the decision boundary that started
+too low stopped after a number of itertions when the mse started to increase,
+indicating the algorithm was jumping around the minimum. Gradient descent is only
+guaranteed to find a minimum if the step size is small enough to actually reach the 
+minimum, otherwise it can bounce around the minimum and diverge. This is one
+reason to use a step size that decreases the number of iterations. 
+
+I can now plot the learning curves and decision boundary changes for 
+both runs of the model. 
+
+```{r}
+# Function to plot the decision boundary and the learning curve
+plot_decision_learning <- function(results, iris_data) {
+  
+  # Plot results from beginning, middle, and end of iterations
+  rows <- seq(1, nrow(results), by = nrow(results)/2 - 1) 
+  
+  for  (i in rows) {
+    # Select the data for plotting
+    data_row <- results[i, ]
+    weights <- c(data_row$w0, data_row$w1, data_row$w2)
+    i <- data_row$iteration
+    mse <- data_row$mse
+  
+  # Plot decision boudary
+  print(ggplot(iris_data, aes(x = petal_length, y = petal_width, color = species)) +
       geom_jitter() +
-        geom_abline(slope = -weights[2]/weights[3], intercept = -weights[1]/weights[3],
+        geom_abline(slope = -weights[2]/weights[3], 
+                    intercept = -weights[1]/weights[3],
                     color = 'blue', lwd = 1.1) +
       xlab('Petal Length (cm)') +
     ylab('Petal Width (cm)') +
     ggtitle(sprintf('Iteration: %0.0f MSE: %0.4f    w0: %0.2f, w1: %0.2f, w2: %0.2f', 
                     i, mse, weights[1], weights[2], weights[3])) + 
       theme_classic(12) + coord_cartesian(xlim = c(2.5, 8), ylim = c(1.0, 4.0)) + 
-        scale_color_manual(values = c('firebrick', 'darkgreen'))
-    
-    print(p1)
-    
-    }
-    
-    # Plot the learning curve if specified
-    if (plot_learning) {
-      p2 <- ggplot(results_df, aes(x = iteration, y = mse)) + 
-        geom_point(size = 1.2, col = 'darkgreen', shape = 2) + 
-        geom_line(lwd = 1.2, col = 'darkgreen') + ylab('Mean Squared Error') + 
-        ggtitle(sprintf('Learning Curve Iteration: %0.0f with step: %0.4f',
-                        i, learning_rate)) + 
-        theme_classic(12)
-      
-      print(p2)
-    }
-    
+        scale_color_manual(values = c('firebrick', 'darkgreen')))
+  
+  learning_data <- results[1:i, ]
+  print(ggplot(learning_data, aes(x = iteration, y = mse)) + 
+    geom_point(color = 'firebrick', shape = 4) +  ggtitle("Learning curve"))
   }
   
-  return(results)
+  
+  
 }
-```
 
-```{r}
-grad_descent_complete(iris_subset, initial_weights = c(-6, 0.4, 1.2), 
-                      n_steps = 2, learning_rate = 0.005)
+# Plot results for first run
+results_high <- results_high[complete.cases(results_high), ]
+plot_decision_learning(results_high, iris_subset)
 
-```
-
-I will change the call to the function to display the learning curve
-after the algorithm has completed iterations. 
-
-```{r}
-# Start off with a high decision boundary
-
-
-# Start with a low decision boundary
-
+# Plot results for second run
+results_low <- results_low[complete.cases(results_low), ]
+plot_decision_learning(results_low, iris_subset)
 
 ```
+
+
+
+## D. How to Choose a learning step
+
+The learning rate was selected by trial and error. When choosing an error rate, 
+one can make the error of choosing too large, or too small. Too great of a learning
+rate and the algorithm will never converge but "jump" around the minimum. Too tiny of a learning
+rate and the algorithm will converge, but it will take a long time to do so. 
+I experimented with a number of different learning rates and eventually decided on
+0.005. This seemed to converge in a relatively short number of iterations and did
+not diverge from the minimum mse. If this were a tougher problem, I would 
+use a learning rate schedule where the learning rate decreases with the number of
+iterations. However, this was not required for such a simple classification problem.
+Two common learning rate schedules are as follows where $\epsilon_0$ 
+is the initial learning rate. 
+
+$$\epsilon = \epsilon_0 / t$$
+This is a linear decrease in the learning rate with the number of iterations
+
+$$\epsilon = \epsilon_0 * e^{-t}$$ 
+This is an exponential decrease in the learning rate with the number of iterations.
+
+The benefit of a learning rate schedule is that one can begin a problem with a higher
+learning rate to quickly reach the vicinity of the minimum, and then the learning rate 
+decreases with the number of iterations in order to converge to the absolute minimum. 
+Choosing the correct learning rate schedule can make a significant 
+difference in the runtime and accuracy of a model. 
+
+
+## E. How to Choose a stopping criteria
+
+I instituted two different checks for the stopping criteria. The first was based on
+a tolerance threshold for the minimum change in the gradients. If the gradients 
+are not changing above a certain threshold (set at 0.001), then the algorithm
+should stop. I used the square root of the sum of the gradients squared to measure
+the magnitude of the gradients. This stopping criterion is effective because the 
+magnitude of the gradients is directly proportional to the error, and therefore, 
+when the gradients decrease below the threshold, that means the error is not decreasing
+rapidly anymore and further iterations are unnecessary.
+
+The second stopping measure was if the mean-squared error began to increase. 
+This can occur if the algorith misses the absolute minimum and begins to 
+bounce around the true minimum. The cause of this would be a learning rate that 
+is too great. When running the model, the first time the algorithm was stopped 
+bythe maximum number of iterations, and the second time was stopped by the 
+mean squared error increasing. Overall, the algorithm should 
+be able to find a value for the mse within a small distance of the absolute minimum
+depending on the step size. The algorithm developed in this report was able to 
+find an optimal decision boundary for the iris classification task to the extent 
+that a linear classifier can separate the two species. 
