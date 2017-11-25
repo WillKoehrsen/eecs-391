@@ -49,23 +49,25 @@ only the second and third classes, veriscolor and virginica.
 # Create a subset with only the relevant classes
 iris_subset <- dplyr::filter(iris, species == 'versicolor' | species == 'virginica')
 
-# Plot the features colored by class
+# Plot the sepal features colored by class
 ggplot(iris_subset, aes(x = sepal_length, y = sepal_width, color = species)) + 
-  geom_jitter() + xlab('Sepal Length (cm)') + 
+  geom_point() + xlab('Sepal Length (cm)') + 
   ylab('Sepal Width (cm)') + 
   ggtitle('Sepal Width vs Length by Iris Species') + theme_classic(12) + 
   scale_color_manual(values = c('firebrick', 'darkgreen'))
 
+# Plot the petal features colored by class
 ggplot(iris_subset, aes(x = petal_length, y = petal_width, color = species)) + 
-  geom_jitter() + xlab('Petal Length (cm)') + 
+  geom_point() + xlab('Petal Length (cm)') + 
   ylab('Petal Width (cm)') + 
   ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12) + 
   scale_color_manual(values = c('firebrick', 'darkgreen'))
 
 ```
-We can see that there is clearly a line that can separate the two classes
+We can see that there is clearly a line that can almost completely separate the two iris classes
 on the plot of Petal Length vs Width. A simple linear decision boundary
-should have decent accuracy in separating the classes. 
+will have decent accuracy in separating the versicolor 
+and virginica classes based on petal characteristics, but will not achieve 100% accuracy. 
 
 ## B. Plot A Linear Decision Boundary
 
@@ -77,57 +79,64 @@ line to minimize the classification error.
 # Function to plot a linear decision boundary given slope and intercept
 plot_db <- function(iris_data, m, b) {
   ggplot(iris_data, aes(x = petal_length, y = petal_width, color = species)) + 
-    geom_jitter() + geom_abline(slope = m, intercept = b, color = 'blue', lwd = 1.1) + 
+    geom_point() + geom_abline(slope = m, intercept = b, color = 'blue', lwd = 1.1) + 
     xlab('Petal Length (cm)') + 
   ylab('Petal Width (cm)') + 
   ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12) + 
     scale_color_manual(values = c('firebrick', 'darkgreen'))
 }
 
+# Line Parameters
 m <- -0.5
 b <- 4
 # Plot a selected boundary
 plot_db(iris_subset, m, b)
 
 ```
+The decision boundary drawn above mis-classifies five points
+for an overall accuracy of 95%. It will be interesting to see if this is really 
+the best decision boundary that can be drawn, or if a gradient descent algorithm
+can achieve higher accuracy. 
 
 ## C. Define a Simple Threshold Classifier Using the above Decision Boundary
 
-The following function takes in a petal length and a petal width and returns 
-the class (species) of the iris. The threshold classifier mutliplies the given 
+The following function takes in a petal length,  petal width, data set, and model parameters (weights) 
+and returns the class (species) of the iris. The threshold classifier multiplies the 
 weights by the observation features, and classifies based on a threshold of
-zero. The weights hav eben selected to correspond to the decision boundary
+zero (greater than 0 is virginica and less than 0 is versicolor. The weights have been 
+set to defaults corresponding to the decision boundary
 plotted above. 
 
 ```{r}
-# Function takes in a petal length, petal width, and iris data set
+# Function takes in a petal length, petal width, iris data set, 
+# and model parameters
 # and makes a class prediction. The function also plots the 
 # data and the new observation by default
 classify <- function(petal_length, petal_width, iris_data, 
                      plot_results = TRUE, w0 = -4, w1 = 0.5, w2 = 1) {
-  
+  # Threshold classifier
   if ( (petal_length * w1 + petal_width * w2 + w0) < 0) {
     class = 'versicolor'
     
   } else if ((petal_length * w1 + petal_width * w2 + w0) >= 0) {
     class = 'virginica'
     
-  } else {
-    class = sample(c('versicolor', 'virgnica'), size = 1)
-  }
-  
+  } 
   
   iris_data$set <- 'train'
   
+  # Add the prediction to the data set for plotting
   iris_data <- add_row(iris_data, petal_width = petal_width, petal_length = petal_length,
                        sepal_width = NA, sepal_length = NA, species = class, set = 'prediction')
+  
+  # Plot the iris data set and the new prediction
   if (plot_results) {
   print(ggplot(iris_data, aes(x = petal_length, y = petal_width, color = species, shape = set)) + 
-    geom_jitter() + 
+    geom_point() + 
       geom_abline(slope = -w1/w2, intercept = -w0/w2, color = 'blue', lwd = 1.1) + 
     xlab('Petal Length (cm)') + 
   ylab('Petal Width (cm)') + 
-  ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12) + 
+  ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12) + scale_shape_manual(values = c(8, 16)) + 
       scale_color_manual(values = c('firebrick', 'darkgreen')))
   }
     
@@ -140,12 +149,18 @@ classify(petal_length = 2.5, petal_width = 5, iris_data = iris_subset)
 # Another example of new data point
 classify(petal_length = 2.5, petal_width = 2.5, iris_data = iris_subset) 
 ```
-To demonstrate the classification function, I will plot a few of the actual points 
-in the data. 
+The above examples where not in the actual dataset, but
+were correctly classified by the model based o the 
+decision boundary. 
+
+
+To demonstrate the ability of the classification function, I can make predictions
+using some of the points within the data. For these points, we know ahead of time
+the correct species. 
 
 ```{r}
 # Plot a known versicolor example
-iris_subset$species[6]
+sprintf('The true species is: %s', iris_subset$species[6])
 petal_length <- iris_subset$petal_length[6]
 petal_width <- iris_subset$petal_width[6]
 
@@ -153,7 +168,7 @@ classify(petal_length, petal_width, iris_subset)
 
 
 # Plot a known virginica example
-iris_subset$species[66]
+sprintf('The true species is: %s', iris_subset$species[66])
 petal_length <- iris_subset$petal_length[66]
 petal_width <- iris_subset$petal_width[66]
 
@@ -161,15 +176,18 @@ classify(petal_length, petal_width, iris_subset)
 ```
 
 The linear classifier correctly identifies both classes. There are several instances near the 
-boundary the model mis-classifies because the decision boundary is not entirely linear.
+boundary the model mis-classifies because the separating line between the two species
+on a plot of petal width vs petal length is not completely linear. 
 
 ## D. Define a circle decision boundary using a single point as center
 
-The function below takes a center for the circle and a radius and draws a 
-circular decision boundary. Points are classifed using the Euclidean distance.
-If points are within the raidus from the center of the circle in terms of
-the Euclidean distance, then they are within the circle. The class for points within the 
-circle is determined by the iris class with the most points in the cirlce. 
+The function below takes a center for the circle (in the form (petal_length, petal_width)) and a radius and draws a 
+circular decision boundary. Points are classified using the Euclidean distance.
+If points are within the radius from the center of the circle in terms of
+the Euclidean distance, then they are within the circle. The class of points within the 
+circle is determined by the iris class with the most points in the circle. 
+For example, if there are more veriscolor irises in the circle than viriginica, then
+all the data points within the circle would be considered versicolor and those outside virginica. 
 Accuracy is assessed as the number of points correctly classified divided by the 
 total number of iris observations. 
 
@@ -221,7 +239,7 @@ circular_db <- function(center, radius, iris_data) {
   circ_df <- data.frame(x = center[1], y = center[2], radius = radius)
   
   # Plot the data and the circular decision boundary
-  p <- ggplot(iris_subset) + geom_jitter(aes(x = petal_length, y = petal_width, color = species)) + 
+  p <- ggplot(iris_subset) + geom_point(aes(x = petal_length, y = petal_width, color = species)) + 
     geom_circle(data = circ_df, aes(x0 = x, y0 = y, r = radius)) + coord_fixed() +
     xlab('Petal Length (cm)') + 
   ylab('Petal Width (cm)') + 
@@ -236,7 +254,7 @@ circular_db <- function(center, radius, iris_data) {
 
 ```
 
-The next step is to test the classifcation accuracy of the circle with several
+The next step is to test the classification accuracy of the circle with several
 values for the center and radius.
 
 ```{r}
@@ -251,7 +269,7 @@ circular_db(center = c(6, 2), radius = 1, iris_data = iris_subset)
 ```
 
 The final circle achieves the best accuracy. The performance could be further improved
-by careful adjujstment of the decision boundary, but as with the linear classifier,
+by careful adjustment of the decision boundary, but as with the linear classifier,
 a perfect model is not possible with this data. 
 
 # Objective Function
@@ -259,18 +277,26 @@ a perfect model is not possible with this data.
 ## A. Mean Squared Error 
 
 The next task is to write a function which calculates the mean-squared error for a given 
-decision boundary. To calculate a mean-squared error, I will need to replace the threshold
-activation with a sigmoid function that outputs class probabilities. The mean-squared 
-error is then computed as the average of the squared residuals of the predictions.
-The residuals are the difference between the correct answer and the predicted
-output. The objective is to minimize the mean squared error by selecting
-the best decision boundary. 
+decision boundary. To calculate a mean-squared error, I will replace the threshold
+activation with a sigmoid function that outputs class probabilities. 
+With a simple threshold (0 or 1) boundary, the mean squared error would is simply 
+the percentage of points mis-classified. Instead, I can use
+the sigmoid function to return the probability an iris is 
+within a given class and then apply the mean-squared error
+as the objective function. I like to use the sigmoid activation
+because it represents the uncertainty in the prediction rather
+than outputting a simple 0 or 1. 
+The mean-squared is computed as the average of the squared residuals of the predictions where the residuals are the difference between the correct answer and the predicted
+output. For this problem, the correct class is either 0, versicolor, or 1, virginica. The output 
+from the model will be a probability between 0 and 1 for each class. If the prediction is 0.8, and the true class is 1 (virginica), then the residual is 0.2. 
+The objective is to minimize the mean squared error by optimizing 
+the parameters of the model. 
 
 ```{r}
 # Sigmoid function
 sigmoid <- function(x) {return(1 / (1 + exp(-x)) )}
 
-# Takes in data with correct values (labels) and weights of decision boundary
+# Takes in data frame with correct values (labels) and weights of decision boundary
 # Weights should be in form (w0, w1, w2) and labels are 0 (versicolor) 
 # or 1 (virginica).  
 create_model <- function(iris_data, weights, plot_results = TRUE) {
@@ -292,19 +318,19 @@ create_model <- function(iris_data, weights, plot_results = TRUE) {
   # Calculate the mean squared error
   mse <- mean( (predictions - labels) ^ 2)
   
+  # Plot the classes and decision boundary
   if (plot_results) {
   print(ggplot(iris_data, aes(x = petal_length, y = petal_width, color = species)) + 
-    geom_jitter() + 
+    geom_point() + 
       geom_abline(slope = -weights[2]/weights[3], intercept = -weights[1]/weights[3], 
                   color = 'blue', lwd = 1.1) + 
     xlab('Petal Length (cm)') + 
   ylab('Petal Width (cm)') + 
-  ggtitle(sprintf('w0: %0.2f, w1: %0.2f, w2: %0.2f', weights[1], weights[2], weights[3]))
+  ggtitle(sprintf('MSE: %0.4f,   w0: %0.2f, w1: %0.2f, w2: %0.2f', mse, weights[1], weights[2], weights[3]))
   + theme_classic(12) + 
       scale_color_manual(values = c('firebrick', 'darkgreen')))
   }
   
-  print(sprintf('MSE on iris data set: %0.4f', mse))
 }
 
 # Example application
@@ -312,6 +338,12 @@ weights <- c(-4, 0.5, 1)
 
 create_model(iris_subset, weights)
 ```
+
+The example shown above is the same decision boundary as was
+used previously. Classifications are made by multiplying
+the features of the observation by the model parameters and then applying the sigmoid
+activation function to calculate the class probability. 
+
 ## B. Plot a decision boundary with a high and low MSE
 
 The low MSE corresponds to the linear decision boundary previously drawn that 
@@ -325,6 +357,10 @@ create_model(iris_subset, weights = c(-4.6, 0.6, 1.1))
 # High MSE 
 create_model(iris_subset, weights = c(-4.5, 0.9, 1.1))
 ```
+
+The first decision boundary has a significantly lower mean-squared error than the second. The number of misclassifications
+is directly proportional to the mse. 
+
 ## C. Derivation of MSE with respect to weights
 
 Class probabilities of an observation are made with the following equation:
@@ -332,15 +368,18 @@ Class probabilities of an observation are made with the following equation:
 $$ p_n = \sigma (w_0  + w_1 * length_n + w_2 * width_n)$$ 
 Where $\sigma$ is the sigmoid activation function. The mean squared error
 is therefore 
-
 $$mse = \frac{1}{N} \sum\limits_{n=1}^{N} ( \sigma(w_0 + w_1 * L_n + w_2 * W_n) - y_n)^2 $$ 
-Where $y_n$ is the known label for the observation. M refers to the total number
+
+Where $y_n$ is the known label for the observation. N refers to the total number
 of observations (data points) which in this problem is 100. The sigmoid activation function
 has the nice feature that the derivative is:
-
 $$\frac{d\sigma(x)}{dx} = \sigma(x) * (1 - \sigma(x))$$ 
-To simply the equation, we can define the weight row vector as 
-$$\textbf{w} = [w_o, w_1, w_2]$$ 
+To simply the equation, we can define the weight column vector as 
+$$\textbf{w} = \begin{bmatrix}
+           w_{0} \\
+           w_{1} \\
+           w_{2}
+         \end{bmatrix}$$ 
 and all of the observations as a matrix
 
 $$\textbf{x} = \left( \begin{array}{ccc}
@@ -357,16 +396,29 @@ $$\textbf{y} = \begin{bmatrix}
            \vdots \\
            y_{n}
          \end{bmatrix}$$
-         
+
+The matrix algebra works out because the shape of $\textbf{x}$ is 100 x 3, the shape of
+$\textbf{w}$ is 3 x 1, and the shape of the label vector $\textbf{y}$ is 100 x 1. 
+
 The MSE is now expressed as
 
 $$mse = \frac{1}{N}  ( \sigma(\textbf{x} * \textbf{w}) - \textbf{y})^2$$
+To update the model parameters, we need to take the derivative of the objective function 
+respect to the weights. The derivative is then set to 
+0 to and is minimized using gradient descent. 
+
 The gradient of the mse with respect to the weights is
 
-$$\frac{\partial(mse)}{d\textbf{w}} = \frac{2}{N} * \textbf{x} * (1 - \sigma(\textbf{x} * \textbf{w}) * ( \sigma(\textbf{x} * \textbf{w}) - \textbf{y}) $$
+$$\frac{\partial(mse)}{\partial\textbf{w}} = \frac{2}{N} * \textbf{x} * (1 - \sigma(\textbf{x} * \textbf{w}) * ( \sigma(\textbf{x} * \textbf{w}) - \textbf{y}) $$
+This is the vector form of the equation which is much more
+efficient to calculate than the scalar version for each component of the weights. 
+
 If we substitute in the probability already calculated, the equation becomes:
 
-$$\frac{\partial(mse)}{d\textbf{w}} = \frac{2}{N} * \textbf{x} * (1 - \textbf{p}) * (\textbf{p} - \textbf{y}) $$
+$$\frac{\partial(mse)}{\partial\textbf{w}} = \frac{2}{N} * \textbf{x} * (1 - \textbf{p}) * (\textbf{p} - \textbf{y}) $$
+Expressing the gradient in this form makes it easier to compute
+because we already calculate p, the class probability, when 
+making predictions. 
 
 ## D. Scalar versus Vector Gradient
 
@@ -374,18 +426,23 @@ The full scalar gradient for weight $w_i$ is
 
 $$\frac{\partial(mse)}{\partial{w_i}} = \frac{2}{N} * \sum\limits_{n=1}^{N} ( x_{i,n} *  (1 - \sigma(\textbf{x}_n * \textbf{w})*(\sigma(\textbf{x}_n * \textbf{w}) - y_n)) $$
 In this equation, n is the observation, and i is the weight. In this problem,
-there are three weights and 100 observations, so for each iteration, we would need to 
+there are 3 weights and 100 observations, so for each iteration, we would need to 
 perform a sum over all 100 observations 3 separate times to update the three weights.
 
 The computation requirements can be greatly reduced by expressing the observations 
 as a (100 by 3) matrix, the weights as a (3 by 1) vector, and the labels as a 
-(100 by 1) vector. The gradient of the mean squared error with respect to the weights:
+(100 by 1) vector. The gradient of the mean squared error with respect to the weights as a vector is much simpler:
 
 $$\frac{\partial(mse)}{\partial\textbf{w}} = \frac{2}{N}  * (1 - \sigma(\textbf{x} * \textbf{w})) * (\sigma(\textbf{x} * \textbf{w}) - \textbf{y}) * \textbf{x}$$
 
-The gradient update rule updates the weights on each iteration
+The gradient update rule uses the gradient to adjust the weights to minimize the objective
+function on each iteration. 
 
 $$\textbf{w}_{t+1} = \textbf{w}_t - \epsilon * \frac{\partial(mse)}{\partial(\textbf{w}_t)}$$ 
+Where $\epsilon$ is the learning rate. Eventually, gradient
+descent will converge on the minimum of the cost function 
+if the step size is small enough.
+
 ## E. Calculate the Gradient and Update the Weights
 
 The algorithm is relatively straightforward to implement. I can initialize the 
@@ -435,7 +492,7 @@ grad_descent <- function(iris_data, initial_weights, n_steps = 5,
     # Plot the decision boundary if specified
     if (plot_decision) {
     p1 <- ggplot(iris_data, aes(x = petal_length, y = petal_width, color = species)) +
-      geom_jitter() +
+      geom_point() +
         geom_abline(slope = -weights[2]/weights[3], intercept = -weights[1]/weights[3],
                     color = 'blue', lwd = 1.1) +
       xlab('Petal Length (cm)') +
@@ -463,8 +520,10 @@ grad_descent <- function(iris_data, initial_weights, n_steps = 5,
   
 }
   
+# Example
 grad_descent(iris_subset, initial_weights = c(-6, 0.5, 1))  
 
+# Example
 grad_descent(iris_subset, initial_weights = c(-3.5, 0.5, 1))
 
 ```
@@ -472,7 +531,7 @@ grad_descent(iris_subset, initial_weights = c(-3.5, 0.5, 1))
 As can be seen, the algorithm successfully updates the decision boundary
 to decrease the mean squared error with each iteration. If the decision boundary
 starts off too low, it is raised higher, and when it starts off too high,
-it is slowly lower. With enough steps and a small enough learning rate, 
+it is slowly lowered. With enough steps and a small enough learning rate, 
 the algorithm will converge on the optimal decision boundary. 
 
 # Optimization Using Gradient Descent
@@ -480,11 +539,9 @@ the algorithm will converge on the optimal decision boundary.
 ## A. Implement Gradient Descent
 
 The function above already implements gradient descent on the iris data set. 
-To perform the algorithm, the function needs a set of initial weights (w0, w1, w2), 
-a learning rate (the default is 0.01), a number of iterations (the default is 5). 
-I need to modify the function to plot the learning curve over time. 
-
-## B. Plot the decision boundary and learning curve
+To implement the algorithm, the function needs a set of initial weights (w0, w1, w2), 
+a learning rate (the default is 0.01), a number of iterations (the default is 5), and a tolerance 
+at which to stop iterating. 
 
 ```{r}
 # Function takes in the iris data set, initial weights, number of iterations, 
@@ -537,10 +594,17 @@ grad_descent_complete <- function(iris_data, initial_weights, n_steps = 5,
     }
     
     # Second stopping criteria
-    if (mse > min(results_df$mse, na.rm = TRUE)) {
+    all_mse <- results_df$mse[!is.na(results_df$mse)]
+    if (length(all_mse) > 3) {
+      n_mse <- length(all_mse)
+      # Find the third lowest mse and compare to current mse
+      third_lowest_mse <- sort(all_mse, decreasing = TRUE)[n_mse - 2]
+      
+      if (mse > third_lowest_mse) {
       print('MSE Inceasing.')
       return(results_df)
-    }
+      }
+    } 
     
     # Update the weights
     weights <- as.numeric(weights - learning_rate * gradient)
@@ -556,37 +620,14 @@ grad_descent_complete <- function(iris_data, initial_weights, n_steps = 5,
 }
 ```
 
-## C. Show results from the iris data set
+## B. Plot Decision Boundary and Learning Curve
 
-I will show two different results of the algorithm, one starting with 
-an initally too high decision boundary, and the other with an initially too low
-decision boundary. The algorithms are run until the maximum number of steps 
-is reached, or thesquare of the sum of the gradients is below the specified
-olerance. The results can then be plotted to visualize the change in decision 
-boundary and the learning curve. 
-
-```{r}
-# Start with a high decision boundary
-results_high <- grad_descent_complete(iris_subset, initial_weights = c(-6, 0.4, 1.2), 
-                      n_steps = 500, learning_rate = 0.005, tolerance = 0.005)
-
-# Start with a low decision boundary
-results_low <- grad_descent_complete(iris_subset, initial_weights = c(-3.6, 0.6, 1.2), 
-                      n_steps = 500, learning_rate = 0.005, tolerance = 0.005)
-
-```
-
-The model that started with the high decision boundary continued to improve until
-the maxmium number of iterations was reached while the decision boundary that started
-too low stopped after a number of itertions when the mse started to increase,
-indicating the algorithm was jumping around the minimum. Gradient descent is only
-guaranteed to find a minimum if the step size is small enough to actually reach the 
-minimum, otherwise it can bounce around the minimum and diverge. This is one
-reason to use a step size that decreases the number of iterations. 
-
-I can now plot the learning curves and decision boundary changes for 
-both runs of the model. 
-
+The code above implements gradient descent to optimize the 
+model parameters and also
+returns the parameters and mse on each iteration. 
+Using these results, we can plot the decision boundary and mse
+over the number of iterations to see if the algorithm
+correctly updates the model parameters. 
 ```{r}
 # Function to plot the decision boundary and the learning curve
 plot_decision_learning <- function(results, iris_data) {
@@ -603,7 +644,7 @@ plot_decision_learning <- function(results, iris_data) {
   
   # Plot decision boudary
   print(ggplot(iris_data, aes(x = petal_length, y = petal_width, color = species)) +
-      geom_jitter() +
+      geom_point() +
         geom_abline(slope = -weights[2]/weights[3], 
                     intercept = -weights[1]/weights[3],
                     color = 'blue', lwd = 1.1) +
@@ -618,68 +659,123 @@ plot_decision_learning <- function(results, iris_data) {
   print(ggplot(learning_data, aes(x = iteration, y = mse)) + 
     geom_point(color = 'firebrick', shape = 4) +  ggtitle("Learning curve"))
   }
-  
-  
-  
-}
 
+}
+```
+
+## C. Show results from the iris data set
+
+I will show two different results of the algorithm, one starting with 
+an initially too high decision boundary, and the other with an initially too low
+decision boundary. The algorithms are run until the maximum number of steps 
+is reached, the square of the sum of the gradients is below the specified
+tolerance, or the mse increases for 3 iterations in a row. The results can then be plotted to 
+visualize the change in decision 
+boundary and the learning curve. 
+
+```{r}
+# Start with a high decision boundary
+results_high <- grad_descent_complete(iris_subset, initial_weights = c(-6, 0.4, 1.2), 
+                      n_steps = 500, learning_rate = 0.005, tolerance = 0.005)
+
+# Start with a low decision boundary
+results_low <- grad_descent_complete(iris_subset, initial_weights = c(-3.6, 0.6, 1.2), 
+                      n_steps = 500, learning_rate = 0.005, tolerance = 0.005)
+
+```
+
+The model that started with the high decision boundary continued to improve until
+the maximum number of iterations was reached while the decision boundary that started
+too low stopped after a number of iterations when the mse started to increase,
+indicating the algorithm was jumping around the minimum. Gradient descent is only
+guaranteed to find a minimum if the step size is small enough to actually reach the 
+minimum, otherwise it can bounce around the minimum and diverge. This is one
+reason to use a step size that decreases the number of iterations. 
+
+I can now plot the learning curves and decision boundary changes for the first run of the model. 
+
+```{r}
 # Plot results for first run
 results_high <- results_high[complete.cases(results_high), ]
 plot_decision_learning(results_high, iris_subset)
 
+```
+The results clearly show the mse decreasing with the number of iterations. We can also plot an example where the decision 
+boundary starts too low to verify the algorithm works from both directions as expected. 
+
+```{r}
 # Plot results for second run
 results_low <- results_low[complete.cases(results_low), ]
 plot_decision_learning(results_low, iris_subset)
-
 ```
 
+In both cases, the algorithm is able to correctly adjust the 
+model parameters to minimize the mean-squared error objective
+function. The algorithm correctly implements gradient
+descent to learn the optimal decision boundary
+for the iris data set. 
 
 
 ## D. How to Choose a learning step
 
 The learning rate was selected by trial and error. When choosing an error rate, 
-one can make the error of choosing too large, or too small. Too great of a learning
-rate and the algorithm will never converge but "jump" around the minimum. Too tiny of a learning
-rate and the algorithm will converge, but it will take a long time to do so. 
+one can make the error of choosing too large or too small. Too great of a learning
+rate and the algorithm will never converge but will "jump" around the minimum. Too tiny of a learning
+rate and the algorithm will converge, but it will take an extremely long time to do so. 
 I experimented with a number of different learning rates and eventually decided on
 0.005. This seemed to converge in a relatively short number of iterations and did
-not diverge from the minimum mse. If this were a tougher problem, I would 
-use a learning rate schedule where the learning rate decreases with the number of
-iterations. However, this was not required for such a simple classification problem.
+result in significant divergence from the minimum mse. The learning rate was verified 
+in the above applications of the algorithm. 
+If this were a tougher problem, I would 
+use a learning rate schedule wherein the learning rate decreases with the number of
+iterations.
+
 Two common learning rate schedules are as follows where $\epsilon_0$ 
 is the initial learning rate. 
 
+Linear learning rate decay: 
+
 $$\epsilon = \epsilon_0 / t$$
-This is a linear decrease in the learning rate with the number of iterations
+Exponential learning rate decay:
 
 $$\epsilon = \epsilon_0 * e^{-t}$$ 
-This is an exponential decrease in the learning rate with the number of iterations.
 
 The benefit of a learning rate schedule is that one can begin a problem with a higher
-learning rate to quickly reach the vicinity of the minimum, and then the learning rate 
-decreases with the number of iterations in order to converge to the absolute minimum. 
+learning rate to quickly reach the vicinity of the minimum, and then decrease the 
+learning rate to converge on the minimum of the objective function. 
 Choosing the correct learning rate schedule can make a significant 
 difference in the runtime and accuracy of a model. 
 
 
 ## E. How to Choose a stopping criteria
 
-I instituted two different checks for the stopping criteria. The first was based on
+I instituted three different checks for the stopping criteria. The first was based on
 a tolerance threshold for the minimum change in the gradients. If the gradients 
-are not changing above a certain threshold (set at 0.001), then the algorithm
+are not changing above a certain threshold (set at 0.005), then the algorithm
 should stop. I used the square root of the sum of the gradients squared to measure
 the magnitude of the gradients. This stopping criterion is effective because the 
 magnitude of the gradients is directly proportional to the error, and therefore, 
-when the gradients decrease below the threshold, that means the error is not decreasing
+when the gradient decreases below the threshold, that means the error is not decreasing
 rapidly anymore and further iterations are unnecessary.
 
-The second stopping measure was if the mean-squared error began to increase. 
-This can occur if the algorith misses the absolute minimum and begins to 
+The second stopping measure was if the mean-squared error increased for 3 iterations in a row.  
+This can occur if the algorithm misses the absolute minimum and begins to 
 bounce around the true minimum. The cause of this would be a learning rate that 
-is too great. When running the model, the first time the algorithm was stopped 
-bythe maximum number of iterations, and the second time was stopped by the 
-mean squared error increasing. Overall, the algorithm should 
-be able to find a value for the mse within a small distance of the absolute minimum
-depending on the step size. The algorithm developed in this report was able to 
+is too great. When running the model with an initially low decision boundary, the algorithm stopped because the 
+mean squared error was increasing. Overall, the algorithm should be able to find a value for the mse within a small distance of the absolute minimum
+depending on the step size. 
+
+The third stopping criteria was the maximum number of iterations. The first
+run of the model, with the elevated decision boundary, stopped because the maximum
+number of iterations was reached. However, it is not likely there
+were significant opportunities for optimization beyond this point
+because the decrease in the mean-squared error was small. The maximum number of iterations was ultimately set at 500 
+after a few runs for experimentation. The maximum iterations could be raised though 
+because of the low run time of the model. 
+
+The algorithm developed in this report was able to 
 find an optimal decision boundary for the iris classification task to the extent 
-that a linear classifier can separate the two species. 
+that a linear classifier can separate the two species. In order
+to achieve 100% accuracy at this task, a non-linear decision boundary would
+be required, which would necessitate a flexible algorithm, such 
+as a random forest or a piecewise linear model. 
