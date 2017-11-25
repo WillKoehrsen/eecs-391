@@ -363,3 +363,132 @@ ggplot(dplyr::filter(random_reduc_long, n <= 60),
   geom_line() + geom_point() + xlab('Number of Observations') + 
   ylab('Change in Uncertainty (%)') + ggtitle('Change in Uncertainty vs Obs') + 
   scale_color_manual(values = color_vector) + theme_economist(12) + th 
+
+
+# 4. B. KMeans Implementation on Iris Dataset
+
+# Read in Iris Data
+iris_data <- read_csv('irisdata.csv')
+
+
+kmeans <- function(k, iris_df, max_iter = 5) {
+  
+  # Select the features used for clustering
+  iris_df <- dplyr::select(iris_df, petal_length, petal_width, species)
+  
+  # Choose initial cluster centers
+  initial_indices <- sample(1:length(iris_df$species), size = k)
+  cluster_centers <- data.matrix((iris_df[initial_indices, c(1,2)]))
+  
+  track_centers <- as.data.frame(matrix(ncol = 2))
+  names(track_centers) <- c('petal_length', 'petal_width')
+  
+  index <- c()
+  center_index <- c()
+  
+  total_errors <- c()
+  
+  # Iterate for the max iterations or until convergence
+  for (n in 1:max_iter) {
+    
+    previous_cluster_centers <- cluster_centers
+    classes <- c()
+    
+    track_centers <- rbind(track_centers, cluster_centers)
+    
+    # Iterate through the irises
+    for (i in 1:nrow(iris_df)) {
+      iris <- as.numeric((dplyr::select(iris_df, petal_length, petal_width))[i, ])
+      distances <- c()
+      
+      # Iterate through the cluster centers 
+      for (j in 1:k) {
+        center <- cluster_centers[j, ]
+        # Calculate the Euclidean distance between each point 
+        # and the cluster center
+        distance <- dist(matrix(data = c(center, iris), 
+                                ncol = 2, byrow = TRUE), method = 'euclidean')
+        
+        distances <- c(distances, distance)
+      }
+      
+      # The class is the cluster center with the minimum distance
+      class <- which.min(distances)
+      classes <- c(classes, class)
+    }
+    
+    # Assign classes to data points
+    iris_df$class <- classes
+    track_errors <- c()
+    
+    # Loop to update all the cluster centers
+    for (class_num in unique(iris_df$class)) {
+      # Extract only those points assigned to the cluster
+      class_df <- dplyr::filter(iris_df, class == class_num)
+      # Calculate error associated with cluster center
+      class_center <- cluster_centers[class_num, ]
+      errors <- c(class_df$petal_length - class_center[1], 
+                  class_df$petal_width - class_center[2])
+      class_df$length_error <- class_df$petal_length - class_center[1] 
+      class_df$width_error <- class_df$petal_width - class_center[2]
+      class_df <- dplyr::mutate(class_df, total_error = length_error ^ 2 + 
+                                 width_error ^ 2)
+      
+      # Keep track of the errors
+      total_cluster_error <- sum(class_df$total_error)
+      track_errors <- c(track_errors, total_cluster_error)
+      
+      # Update rule for cluster center
+      cluster_centers[class_num, ] = c(mean(class_df$petal_length),
+                                       mean(class_df$petal_width))
+    }
+    
+    total_errors <- c(total_errors, sum(track_errors))
+    index <- c(index, rep(n, k))
+    center_index <- c(center_index, seq(1, k, by = 1))
+    
+    # Convergence condition
+    if (all(previous_cluster_centers == cluster_centers)) {
+      print('Convergence Achieved')
+      track_centers <- track_centers[complete.cases(track_centers), ]
+      track_centers$iter <- index
+      track_centers$center <- center_index
+      return(list('cluster_centers' = track_centers, 'errors' = total_errors))
+      
+      # If convergence not achieved track cluster centers and continue
+    } else {
+      previous_cluster_centers <- cluster_centers
+    }
+    
+    
+    
+    print(sprintf('Iteration: %0.0f total error: %0.2f', n, 
+                  sum(track_errors)))
+    
+    
+  }
+  # Return the position of clusters over iterations
+  track_centers <- track_centers[complete.cases(track_centers), ]
+  track_centers$iter <- index
+  track_centers$center <- center_index
+  return(list('cluster_centers' = track_centers, 'errors' = total_errors))
+}
+
+results <- kmeans(3, iris_data, max_iter = 5)
+
+cluster_df <- results$cluster_centers
+total_error <- results$errors
+
+ggplot(cluster_df, aes(petal_length, petal_width, 
+                       col = as.factor(center), shape = as.factor(iter))) + 
+  geom_point() + 
+  xlab('Petal Length (cm)') + 
+  ylab('Petal Width (cm)') + 
+  ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12) + 
+  scale_color_manual(values = c('firebrick', 'darkgreen', 'navy'))
+
+ggplot(iris_data, aes(x = petal_length, y = petal_width, color = species)) + 
+  geom_jitter() + xlab('Petal Length (cm)') + 
+  ylab('Petal Width (cm)') + 
+  ggtitle('Petal Width vs Length by Iris Species') + theme_classic(12) + 
+  scale_color_manual(values = c('firebrick', 'darkgreen', 'navy'))
